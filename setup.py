@@ -18,5 +18,8 @@ setup(
     license="MIT",
     packages=find_packages(exclude=["tests*"]),
     install_requires=requirements,
+    package_data={
+        '': ['assets/*'],
+    },
     include_package_data=True,
 )
