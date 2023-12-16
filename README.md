@@ -27,11 +27,21 @@ Stay tuned for a technical report comparing WhisperS2T against other whisper pip
 
 ### Installation
 
-```sh
-# Install audio utils
-apt-get install -y libsndfile1 ffmpeg
+Install audio packages required for resampling and loading audio files.
 
-# Install WhisperS2T
+```sh
+apt-get install -y libsndfile1 ffmpeg
+```
+
+To install or update to the latest released version of WhisperS2T use the following command:
+
+```sh
+pip install -U whisper-s2t
+```
+
+Or to install from latest commit in this repo:
+
+```sh
 pip install -U git+https://github.com/shashikg/WhisperS2T.git
 ```
 
@@ -64,6 +74,8 @@ print(out[0][0])
  'end_time': 24.8}
 """
 ```
+
+Check this [Documentation](doc.md) for more details.
 
 
 ## License
