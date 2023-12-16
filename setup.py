@@ -1,20 +1,22 @@
-import os
-import pkg_resources
-from setuptools import setup
+from setuptools import setup, find_packages
 
-requirements_file_path = os.path.join(os.path.dirname(__file__), "requirements.txt")
-requirements = [str(r) for r in pkg_resources.parse_requirements(open(requirements_file_path))]
+with open("README.md", "r", encoding="utf-8") as fh:
+    long_description = fh.read()
+
+with open("requirements.txt", "r", encoding="utf-8") as f:
+    requirements = f.read().splitlines()
 
 setup(
     name="whisper_s2t",
     version="1.0.0",
     description="An Optimized Speech-to-Text Pipeline for the Whisper Model.",
-    readme="README.md",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     python_requires=">=3.8",
     author="Shashi Kant Gupta",
     url="https://github.com/shashikg/WhisperS2T",
     license="MIT",
-    packages=['whisper_s2t'],
+    packages=find_packages(exclude=["tests*"]),
     install_requires=requirements,
     include_package_data=True,
 )
