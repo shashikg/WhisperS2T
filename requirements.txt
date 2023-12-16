@@ -1,0 +1,10 @@
+tqdm
+torch
+numpy
+ctranslate2
+tokenizers
+huggingface-hub
+accelerate
+optimum
+transformers
+openai-whisper

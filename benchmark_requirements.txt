@@ -1,0 +1,11 @@
+gdown
+nemo_text_processing
+packaging
+ninja
+clean-text
+contractions
+jiwer
+nltk
+editdistance
+unidecode
+diff_match_patch
