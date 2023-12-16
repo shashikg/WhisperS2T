@@ -8,7 +8,7 @@ WhisperS2T is an optimized lightning-fast speech-to-text pipeline tailored for t
 
 Stay tuned for a technical report comparing WhisperS2T against other whisper pipelines. Meanwhile, check some quick benchmarks on A30 GPU.
 
-![A30 Benchmark](files/benchmarks.png "A30 Benchmark")
+![A30 Benchmark](files/benchmarks.png)
 
 
 ## Features
