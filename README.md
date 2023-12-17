@@ -75,7 +75,7 @@ print(out[0][0])
 """
 ```
 
-Check this [Documentation](doc.md) for more details.
+Check this [Documentation](docs.md) for more details.
 
 
 ## License
