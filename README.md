@@ -6,10 +6,11 @@ WhisperS2T is an optimized lightning-fast speech-to-text pipeline tailored for t
 
 ## Benchmark and Technical Report
 
-Stay tuned for a technical report comparing WhisperS2T against other whisper pipelines. Meanwhile, check some quick benchmarks on A30 GPU.
+Stay tuned for a technical report comparing WhisperS2T against other whisper pipelines. Meanwhile, check some quick benchmarks on A30 GPU. See `scripts/` directory for the benchmarking scripts that I used.
 
 ![A30 Benchmark](files/benchmarks.png)
 
+**NOTE:** I ran all the benchmarks with `without_timestamps` parameter as `True`. Setting `without_timestamps` as `False` may improve the WER of HuggingFace pipiline at the expense of additional inference time.
 
 ## Features
 
@@ -76,6 +77,8 @@ print(out[0][0])
 ```
 
 Check this [Documentation](docs.md) for more details.
+
+**NOTE:** For first run the model may give slightly slower inference speed. After 1-2 runs it will give better inference speed. This is due to the JIT tracing of the VAD model.
 
 
 ## Acknowledgements
