@@ -55,6 +55,7 @@ class WhisperModel(ABC):
 
         self.vad_model = vad_model
         self.speech_segmenter_options = speech_segmenter_options
+        self.speech_segmenter_options['max_seg_len'] = self.max_speech_len
 
         # Tokenizer
         if tokenizer is None:
