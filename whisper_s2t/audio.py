@@ -12,6 +12,19 @@ from multiprocessing.dummy import Pool
 from . import BASE_PATH
 from .configs import *
 
+silent_file = f"{BASE_PATH}/assets/silent.mp3"
+
+RESAMPLING_ENGINE = 'soxr'
+with tempfile.TemporaryDirectory() as tmpdir:
+    ret_code = os.system(f'ffmpeg -version')
+    if ret_code != 0:
+        print(f"Seems 'ffmpeg' is not installed. Please install ffmpeg before using this package!")
+    else:
+        ret_code = os.system(f'ffmpeg -hide_banner -loglevel panic -i {silent_file} -threads 1 -acodec pcm_s16le -ac 1 -af aresample=resampler={RESAMPLING_ENGINE} -ar 1600 {tmpdir}/tmp.wav -y')
+
+        if ret_code != 0:
+            print(f"'ffmpeg' is not built with soxr resampler, using 'swr' resampler. This may degrade performance.")
+            RESAMPLING_ENGINE = 'swr'
 
 def load_audio(input_file, sr=16000, return_duration=False):
     
@@ -25,7 +38,7 @@ def load_audio(input_file, sr=16000, return_duration=False):
     except:
         with tempfile.TemporaryDirectory() as tmpdir:
             wav_file = f"{tmpdir}/tmp.wav"
-            os.system(f'ffmpeg -hide_banner -loglevel panic -i {input_file} -threads 1 -acodec pcm_s16le -ac 1 -af aresample=resampler=soxr -ar {sr} {wav_file} -y')
+            ret = os.system(f'ffmpeg -hide_banner -loglevel panic -i {input_file} -threads 1 -acodec pcm_s16le -ac 1 -af aresample=resampler={RESAMPLING_ENGINE} -ar {sr} {wav_file} -y')
         
             with wave.open(wav_file, 'rb') as wf:
                 frames = wf.getnframes()
