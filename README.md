@@ -2,7 +2,7 @@
 
 WhisperS2T is an optimized lightning-fast speech-to-text pipeline tailored for the whisper model! It's designed to be exceptionally fast, boasting a 1.5X speed improvement over WhisperX and a 2X speed boost compared to HuggingFace Pipeline with FlashAttention 2 (Insanely Fast Whisper). Moreover, it includes several heuristics to enhance transcription accuracy. 
 
-[**Whisper**](https://github.com/openai/whisper) is a general-purpose speech recognition model developed by OpenAI. It is trained on a large dataset of diverse audio and is also a multitasking model that can perform multilingual speech recognition, speech translation, and language identification.
+[**Whisper**](https://github.com/openai/whisper) is a general-purpose speech recognition model developed by OpenAI and not me. It is trained on a large dataset of diverse audio and is also a multitasking model that can perform multilingual speech recognition, speech translation, and language identification.
 
 
 ## News
@@ -19,7 +19,6 @@ Stay tuned for a technical report comparing WhisperS2T against other whisper pip
 ![A30 Benchmark](https://github.com/shashikg/WhisperS2T/assets/22556187/50e563af-f58a-488f-bd88-9f5454ae4044)
 
 **NOTE:** I conducted all the benchmarks using the `without_timestamps` parameter set as `True`. Adjusting this parameter to `False` may enhance the Word Error Rate (WER) of the HuggingFace pipeline but at the expense of increased inference time. Notably, the improvements in inference speed were achieved solely through a **superior pipeline design**, without any specific optimization made to the backend inference engines (such as CTranslate2, FlashAttention2, etc.). For instance, WhisperS2T (utilizing FlashAttention2) demonstrates significantly superior inference speed compared to the HuggingFace pipeline (also using FlashAttention2), despite both leveraging the same inference engine—HuggingFace whisper model with FlashAttention2. Additionally, there is a noticeable difference in the WER as well.
-
 
 
 ## Features
@@ -84,6 +83,12 @@ print(out[0][0])
  'start_time': 0.0,
  'end_time': 24.8}
 """
+```
+
+To use word alignment load the model using this: 
+
+```py
+model = whisper_s2t.load_model("large-v2", asr_options={'word_timestamps': True})
 ```
 
 Check this [Documentation](docs.md) for more details.
