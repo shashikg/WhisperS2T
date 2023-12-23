@@ -1,5 +1,9 @@
 import jiwer
 import editdistance
+import diff_match_patch
+
+import numpy as np
+from tqdm import tqdm
 from nltk import ngrams
 from jiwer.transformations import wer_default
 
@@ -69,3 +73,76 @@ def evaluate(references, hypotheses, cer=False, ngram_size=5):
         scores.update({f'{ngram_size}-GramInsertions': NGramInsertions(references, hypotheses,  ngram_size=ngram_size)})
         
     return scores
+
+def word_alignment_accuracy_single(references, hypotheses, collar=0.2):
+    # Find diffs between ref and hyp
+    r_list = [_['word'].replace(" ", "_") for _ in references]
+    h_list = [_['word'].replace(" ", "_") for _ in hypotheses]
+    
+    orig_words = '\n'.join(r_list) + '\n'
+    pred_words = '\n'.join(h_list) + '\n'
+    
+    diff = diff_match_patch.diff_match_patch()
+    diff.Diff_Timeout = 0
+    orig_enc, pred_enc, enc = diff.diff_linesToChars(orig_words, pred_words)
+    diffs = diff.diff_main(orig_enc, pred_enc, False)
+    diff.diff_charsToLines(diffs, enc)
+    
+    diffs_post = [(d[0], d[1].replace('\n', ' ').strip().split()) for d in diffs]
+
+    # Find words which got HIT and their matching
+    r_idx, h_idx = 0, 0
+    word_idx_match = {}
+    for case, words in diffs_post:
+        if case == -1:
+            r_idx += len(words)
+        elif case == 1:
+            h_idx += len(words)
+        else:
+            for _ in words:
+                word_idx_match[r_idx] = h_idx
+                r_idx += 1
+                h_idx += 1
+
+
+    # Find words whose alignments overlap with each other
+    overlapped_words = 0
+    within_collar_words = 0
+    for r_idx, h_idx in word_idx_match.items():
+        if (hypotheses[h_idx]['start']<references[r_idx]['end']) and (hypotheses[h_idx]['end']>references[r_idx]['start']):
+            overlapped_words += 1
+
+        if (hypotheses[h_idx]['start']>=references[r_idx]['start']-collar) and (hypotheses[h_idx]['end']<=references[r_idx]['end']+collar):
+            within_collar_words += 1
+
+    
+    results = {
+        'acc_overlapped': round(100*overlapped_words/len(word_idx_match), 2),
+        'acc_within_collar': round(100*within_collar_words/len(word_idx_match), 2),
+        'overlapped_words': overlapped_words,
+        'within_collar_words': within_collar_words,
+        'total_hit_words': len(word_idx_match),
+    }
+
+    return results
+
+def word_alignment_accuracy(references, hypotheses, collar=0.2):
+    overlapped_words = 0
+    within_collar_words = 0
+    total_hit_words = 0
+
+    for r, h in tqdm(zip(references, hypotheses), total=len(references)):
+        res = word_alignment_accuracy_single(r, h, collar=collar)
+        overlapped_words += res['overlapped_words']
+        within_collar_words += res['within_collar_words']
+        total_hit_words += res['total_hit_words']
+
+    results = {
+        'acc_overlapped': round(100*overlapped_words/total_hit_words, 2),
+        'acc_within_collar': round(100*within_collar_words/total_hit_words, 2),
+        'overlapped_words': overlapped_words,
+        'within_collar_words': within_collar_words,
+        'total_hit_words': total_hit_words,
+    }
+
+    return results
