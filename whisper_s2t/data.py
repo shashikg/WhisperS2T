@@ -169,7 +169,14 @@ class WhisperDataLoader:
 
                 audio = np.concatenate(audio)
                 seq_len = audio.shape[-1]
-                segmented_audio_signal.append((audio, prompt, initial_prompt_tokens, seq_len, {'file_id': file_id, 'start_time': stitched_seg[0][0], 'end_time': stitched_seg[-1][1]}))
+                seg_metadata = {
+                    'file_id': file_id, 
+                    'start_time': stitched_seg[0][0], 
+                    'end_time': stitched_seg[-1][1], 
+                    'stitched_seg': stitched_seg,
+                    'lang_code': lang
+                }
+                segmented_audio_signal.append((audio, prompt, initial_prompt_tokens, seq_len, seg_metadata))
         else:
             for st, et in start_ends:
                 audio = audio_signal[int(st*sr):int(et*sr)]

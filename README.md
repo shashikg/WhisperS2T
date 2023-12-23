@@ -2,7 +2,15 @@
 
 WhisperS2T is an optimized lightning-fast speech-to-text pipeline tailored for the whisper model! It's designed to be exceptionally fast, boasting a 1.5X speed improvement over WhisperX and a 2X speed boost compared to HuggingFace Pipeline with FlashAttention 2 (Insanely Fast Whisper). Moreover, it includes several heuristics to enhance transcription accuracy. 
 
-[**Whisper**](https://github.com/openai/whisper) is a general-purpose speech recognition model developed by OpenAI. It is trained on a large dataset of diverse audio and is also a multitasking model that can perform multilingual speech recognition, speech translation, and language identification.
+[**Whisper**](https://github.com/openai/whisper) is a general-purpose speech recognition model developed by OpenAI and not me. It is trained on a large dataset of diverse audio and is also a multitasking model that can perform multilingual speech recognition, speech translation, and language identification.
+
+
+## News
+
+* [Dec 23, 2023]: Added support for word alignment for CTranslate2 backend.
+* [Dec 19, 2023]: Added support for Whisper-Large-V3 and Distil-Whisper-Large-V2.
+* [Dec 17, 2023]: Released of WhisperS2T!
+
 
 ## Benchmark and Technical Report
 
@@ -75,6 +83,12 @@ print(out[0][0])
  'start_time': 0.0,
  'end_time': 24.8}
 """
+```
+
+To use word alignment load the model using this: 
+
+```py
+model = whisper_s2t.load_model("large-v2", asr_options={'word_timestamps': True})
 ```
 
 Check this [Documentation](docs.md) for more details.
