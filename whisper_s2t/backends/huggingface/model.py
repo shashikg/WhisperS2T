@@ -65,7 +65,7 @@ class WhisperModelHF(WhisperModel):
         if 'max_new_tokens' in params:
             self.update_params(params={'max_text_token_len': params['max_new_tokens']})
     
-    def generate_segment_batched(self, features, prompts):
+    def generate_segment_batched(self, features, prompts, seq_lens, seg_metadata):
         if self.compute_type == "float16":
             features = features.to(self.device).half()
 

@@ -53,7 +53,7 @@ class WhisperModelOAI(WhisperModel):
         if 'sample_len' in params:
             self.update_params(params={'max_text_token_len': params['sample_len']})
     
-    def generate_segment_batched(self, features, prompts):
+    def generate_segment_batched(self, features, prompts, seq_lens, seg_metadata):
 
         if self.compute_type == "float16":
             features = features.to(self.device).half()
