@@ -7,7 +7,7 @@ WhisperS2T is an optimized lightning-fast speech-to-text pipeline tailored for t
 
 ## News
 
-* [Dec 23, 2023]: Added support for word alignment for CTranslate2 backend.
+* [Dec 23, 2023]: Added support for word alignment for CTranslate2 backend (check [benchmark](https://github.com/shashikg/WhisperS2T/releases/tag/v1.2.0)).
 * [Dec 19, 2023]: Added support for Whisper-Large-V3 and Distil-Whisper-Large-V2.
 * [Dec 17, 2023]: Released of WhisperS2T!
 
