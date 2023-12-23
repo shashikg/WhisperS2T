@@ -3,7 +3,7 @@ data
 results
 temp.ipynb
 .vscode
-
+push_to_pypy.sh
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
