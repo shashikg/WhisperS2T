@@ -75,7 +75,6 @@ def build_encoder(model, args):
         hidden_size=hidden_states,
         max_batch_size=max_batch_size,
         int8=args.quant_mode_enc.has_act_or_weight_quant(),
-        quant_mode=args.quant_mode_enc,
         n_mels=model_metadata['n_mels'],
         num_languages=model_metadata['n_vocab'] - 51765 -
         int(model_is_multilingual),
@@ -104,7 +103,9 @@ def build_encoder(model, args):
         
     if args.use_bert_attention_plugin:
         network.plugin_config.set_bert_attention_plugin(dtype=args.use_bert_attention_plugin)
-        network.plugin_config.set_context_fmha(ContextFMHAType.enabled)
+
+        if args.use_context_fmha_enc:
+            network.plugin_config.set_context_fmha(ContextFMHAType.enabled)
         
     if args.remove_input_padding:
         network.plugin_config.enable_remove_input_padding()
@@ -163,8 +164,7 @@ def build_decoder(model, args):
         cross_attention=True,
         has_position_embedding=True,
         has_token_type_embedding=False,
-        int8=args.quant_mode_dec.has_act_or_weight_quant(),
-        quant_mode=args.quant_mode_dec,
+        int8=args.quant_mode_dec.has_act_or_weight_quant()
     )
 
     tensorrt_llm_whisper_decoder = tensorrt_llm.models.DecoderModel(
@@ -215,7 +215,9 @@ def build_decoder(model, args):
         
     if args.use_gpt_attention_plugin:
         network.plugin_config.set_gpt_attention_plugin(dtype=args.use_gpt_attention_plugin)
-        network.plugin_config.set_context_fmha(ContextFMHAType.enabled)
+
+        if args.use_context_fmha_dec:
+            network.plugin_config.set_context_fmha(ContextFMHAType.enabled)
         
     if args.remove_input_padding:
         network.plugin_config.enable_remove_input_padding()

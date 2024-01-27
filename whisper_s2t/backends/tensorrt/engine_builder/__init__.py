@@ -17,6 +17,8 @@ class TRTBuilderConfig:
                  quantize_dir='quantize/1-gpu',
                  use_gpt_attention_plugin='float16',
                  use_bert_attention_plugin='float16',
+                 use_context_fmha_enc=True,
+                 use_context_fmha_dec=True,
                  use_gemm_plugin='float16',
                  use_layernorm_plugin=None,
                  remove_input_padding=False,
@@ -37,6 +39,8 @@ class TRTBuilderConfig:
         self.quantize_dir = quantize_dir
         self.use_gpt_attention_plugin = use_gpt_attention_plugin
         self.use_bert_attention_plugin = use_bert_attention_plugin
+        self.use_context_fmha_enc = use_context_fmha_enc
+        self.use_context_fmha_dec = use_context_fmha_dec
         self.use_gemm_plugin = use_gemm_plugin
         self.use_layernorm_plugin = use_layernorm_plugin
         self.remove_input_padding = remove_input_padding
@@ -50,18 +54,18 @@ class TRTBuilderConfig:
         self.cuda_compute_capability = list(nvmlDeviceGetCudaComputeCapability(nvmlDeviceGetHandleByIndex(0)))
         nvmlShutdown()
         
-        plugins_args = [
-            'use_gemm_plugin', 
-            'use_gpt_attention_plugin', 
-            'use_bert_attention_plugin'
-        ]
+        # plugins_args = [
+        #     'use_gemm_plugin', 
+        #     'use_gpt_attention_plugin', 
+        #     'use_bert_attention_plugin'
+        # ]
         
-        for plugin_arg in plugins_args:
-            if getattr(self, plugin_arg) is None:
-                print(
-                    f"{plugin_arg} is None, setting it as {self.dtype} automatically."
-                )
-                setattr(self, plugin_arg, self.dtype)
+        # for plugin_arg in plugins_args:
+        #     if getattr(self, plugin_arg) is None:
+        #         print(
+        #             f"{plugin_arg} is None, setting it as {self.dtype} automatically."
+        #         )
+        #         setattr(self, plugin_arg, self.dtype)
         
         
     def identifier(self):
