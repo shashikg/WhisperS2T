@@ -11,4 +11,4 @@ pip3 install /tmp/mpi4py-${MPI4PY_VERSION}
 rm -rf /tmp/mpi4py*
 
 echo "----------------[ Installing TensorRT-LLM ]----------------"
-pip3 install tensorrt_llm==0.8.0.dev2024012301 -U --extra-index-url https://pypi.nvidia.com
+pip3 install tensorrt_llm==0.8.0.dev2024012301 --extra-index-url https://pypi.nvidia.com
