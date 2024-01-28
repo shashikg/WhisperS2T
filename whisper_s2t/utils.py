@@ -7,7 +7,7 @@ class RunningStatus:
         if console:
             self.console = console
         else:
-            console = Console()
+            self.console = Console()
 
     def __enter__(self):
         self.progress = Progress(
