@@ -7,5 +7,7 @@ pip install -U -r benchmark_requirements.txt
 pip install flash-attn==2.3.6 --no-build-isolation
 
 # Download dataset
-gdown 1cBq27gvy_a1HywF_mAug2zOTZGearhhu
+rm -rf data.zip
+wget https://github.com/shashikg/WhisperS2T/releases/download/v1.0.0/data.zip
 unzip data.zip
+rm -rf data.zip
