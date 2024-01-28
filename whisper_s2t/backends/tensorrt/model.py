@@ -84,7 +84,6 @@ class WhisperModelTRT(WhisperModel):
             if trt_build_args is None:
                 print(f"'trt_build_args' not provided in model_kwargs, using default configs.")
                 trt_build_args = TRTBuilderConfig(
-                    max_batch_size=16, 
                     max_output_len=max_text_token_len, 
                     max_beam_width=self.asr_options["beam_size"]
                 )
