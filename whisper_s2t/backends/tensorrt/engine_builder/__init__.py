@@ -7,6 +7,7 @@ from rich.console import Console
 console = Console()
 
 from .download_utils import SAVE_DIR, download_model
+from ....utils import RunningStatus
 
 
 class TRTBuilderConfig:
@@ -93,7 +94,8 @@ def build_trt_engine(model_name='large-v2', args=None, force=False, log_level='e
     args.model_path, tokenizer_path = download_model(model_name)
     
     if force:
-        with console.status(f"'force' flag is 'True'. Removing previous build."):
+        console.print(f"'force' flag is 'True'. Removing previous build.")
+        with RunningStatus("Cleaning", console=console):
             os.system(f"rm -rf {args.output_dir}")
         
     if not os.path.exists(args.output_dir):
@@ -123,7 +125,8 @@ def build_trt_engine(model_name='large-v2', args=None, force=False, log_level='e
     os.system(f"cp {tokenizer_path} {args.output_dir}/tokenizer.json")
     save_trt_build_configs(args)
 
-    with console.status(f"[Exporting Model To TensorRT Engine (3-6 mins)]", spinner='bouncingBar'):
+    console.print(f"Exporting Model To TensorRT Engine (3-6 mins)")
+    with RunningStatus("Exporting TRT Engine", console=console):
         console.print(os.popen(f"python3 -m whisper_s2t.backends.tensorrt.engine_builder.builder --output_dir='{args.output_dir}' --log_level='{log_level}'").read())
 
     return args.output_dir
