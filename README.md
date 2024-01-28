@@ -16,13 +16,14 @@
 </p>
 <hr><br>
 
-WhisperS2T is an optimized lightning-fast speech-to-text pipeline tailored for the whisper model! It's designed to be exceptionally fast, boasting a 2.3X speed improvement over WhisperX and a 3X speed boost compared to HuggingFace Pipeline with FlashAttention 2 (Insanely Fast Whisper). Moreover, it includes several heuristics to enhance transcription accuracy. 
+WhisperS2T is an optimized lightning-fast speech-to-text pipeline tailored for the whisper model! It's designed to be exceptionally fast, boasting a **2.3X speed improvement over WhisperX and a 3X speed boost compared to HuggingFace Pipeline with FlashAttention 2 (Insanely Fast Whisper)**. Moreover, it includes several heuristics to enhance transcription accuracy. 
 
 [**Whisper**](https://github.com/openai/whisper) is a general-purpose speech recognition model developed by OpenAI and not me. It is trained on a large dataset of diverse audio and is also a multitasking model that can perform multilingual speech recognition, speech translation, and language identification.
 
 
 ## News
 
+* [Jan 28, 2024]: Added support for TensorRT-LLM backend.
 * [Dec 23, 2023]: Added support for word alignment for CTranslate2 backend (check [benchmark](https://github.com/shashikg/WhisperS2T/releases/tag/v1.2.0)).
 * [Dec 19, 2023]: Added support for Whisper-Large-V3 and Distil-Whisper-Large-V2 (check [benchmark](https://github.com/shashikg/WhisperS2T/releases/tag/v1.1.0)).
 * [Dec 17, 2023]: Released WhisperS2T!
@@ -35,7 +36,7 @@ Checkout the Google Colab notebooks provided here: [notebooks](notebooks)
 
 Stay tuned for a technical report comparing WhisperS2T against other whisper pipelines. Meanwhile, check some quick benchmarks on A30 GPU. See `scripts/` directory for the benchmarking scripts that I used.
 
-![A30 Benchmark](https://github.com/shashikg/WhisperS2T/assets/22556187/50e563af-f58a-488f-bd88-9f5454ae4044)
+![A30 Benchmark](https://github.com/shashikg/WhisperS2T/assets/22556187/c206ef88-98fa-4ac5-b413-9c0b957a8e58)
 
 **NOTE:** I conducted all the benchmarks using the `without_timestamps` parameter set as `True`. Adjusting this parameter to `False` may enhance the Word Error Rate (WER) of the HuggingFace pipeline but at the expense of increased inference time. Notably, the improvements in inference speed were achieved solely through a **superior pipeline design**, without any specific optimization made to the backend inference engines (such as CTranslate2, FlashAttention2, etc.). For instance, WhisperS2T (utilizing FlashAttention2) demonstrates significantly superior inference speed compared to the HuggingFace pipeline (also using FlashAttention2), despite both leveraging the same inference engine—HuggingFace whisper model with FlashAttention2. Additionally, there is a noticeable difference in the WER as well.
 
