@@ -3,6 +3,9 @@ import hashlib
 import os
 from pynvml import *
 
+from rich.console import Console
+console = Console()
+
 from .download_utils import SAVE_DIR, download_model
 
 
@@ -54,19 +57,6 @@ class TRTBuilderConfig:
         self.cuda_compute_capability = list(nvmlDeviceGetCudaComputeCapability(nvmlDeviceGetHandleByIndex(0)))
         nvmlShutdown()
         
-        # plugins_args = [
-        #     'use_gemm_plugin', 
-        #     'use_gpt_attention_plugin', 
-        #     'use_bert_attention_plugin'
-        # ]
-        
-        # for plugin_arg in plugins_args:
-        #     if getattr(self, plugin_arg) is None:
-        #         print(
-        #             f"{plugin_arg} is None, setting it as {self.dtype} automatically."
-        #         )
-        #         setattr(self, plugin_arg, self.dtype)
-        
         
     def identifier(self):
         params = vars(self)
@@ -96,15 +86,15 @@ def load_trt_build_config(output_dir):
 def build_trt_engine(model_name='large-v2', args=None, force=False, log_level='error'):
     
     if args is None:
-        print(f"args is None, using default configs.")
+        console.print(f"args is None, using default configs.")
         args = TRTBuilderConfig()
     
     args.output_dir = os.path.join(SAVE_DIR, model_name, args.identifier())
     args.model_path, tokenizer_path = download_model(model_name)
     
     if force:
-        print(f"'force' flag is 'True'. Removing previous build.")
-        os.system(f"rm -rf {args.output_dir}")
+        with console.status(f"'force' flag is 'True'. Removing previous build."):
+            os.system(f"rm -rf {args.output_dir}")
         
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
@@ -124,7 +114,7 @@ def build_trt_engine(model_name='large-v2', args=None, force=False, log_level='e
                 break
                 
         if _failed_export:
-            print(f"Export directory exists but seems like a failed export, regenerating the engine files.")
+            console.print(f"Export directory exists but seems like a failed export, regenerating the engine files.")
             os.system(f"rm -rf {args.output_dir}")
             os.makedirs(args.output_dir)
         else:
@@ -133,6 +123,7 @@ def build_trt_engine(model_name='large-v2', args=None, force=False, log_level='e
     os.system(f"cp {tokenizer_path} {args.output_dir}/tokenizer.json")
     save_trt_build_configs(args)
 
-    os.system(f"python3 -m whisper_s2t.backends.tensorrt.engine_builder.builder --output_dir='{args.output_dir}' --model_name='{model_name}' --log_level='{log_level}'")
+    with console.status(f"[Exporting Model To TensorRT Engine]", spinner='bouncingBar'):
+        console.print(os.popen(f"python3 -m whisper_s2t.backends.tensorrt.engine_builder.builder --output_dir='{args.output_dir}' --log_level='{log_level}'").read())
 
     return args.output_dir

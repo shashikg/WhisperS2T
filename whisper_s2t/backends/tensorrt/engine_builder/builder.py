@@ -18,7 +18,6 @@
 import os
 import time
 import argparse
-import multiprocessing
 
 import torch
 import tensorrt_llm
@@ -34,9 +33,6 @@ from tensorrt_llm.functional import LayerNormPositionType, LayerNormType
 
 from . import load_trt_build_config
 from .model_utils import load_encoder_weight, load_decoder_weight
-
-from rich.console import Console
-console = Console()
 
 
 def get_export_size(output_path):
@@ -246,12 +242,9 @@ def build_decoder(model, args):
     serialize_engine(engine, os.path.join(args.output_dir, "decoder.engine"))
 
 
-def run(model_name='large-v2', args=None, log_level='error'):
+def run(args=None, log_level='error'):
 
     logger.set_level(log_level)
-
-    with console.status("[Starting TRT Builder]", spinner='bouncingBar'):
-        builder = Builder()
         
     if args.use_weight_only_enc:
         args.quant_mode_enc = QuantMode.from_description(
@@ -275,34 +268,27 @@ def run(model_name='large-v2', args=None, log_level='error'):
     model = torch.load(args.model_path)
 
     _t = time.time()
-    with console.status("[Building Encoder]", spinner='bouncingBar'):
-        build_encoder(model, args)
-        
+    build_encoder(model, args)    
     _te = time.time()-_t
 
     _t = time.time()
-    with console.status("[Building Decoder]", spinner='bouncingBar'):
-        build_decoder(model, args)
-
+    build_decoder(model, args)
     _td = time.time()-_t
 
-    console.print(f"Time taken for building Encoder: {_te:.2f} seconds.")
-    console.print(f"Time taken for building Decoder: {_td:.2f} seconds.")
-    console.print(f"Exported model size: {get_export_size(args.output_dir)}")
+    print(f"Time taken for building Encoder: {_te:.2f} seconds.")
+    print(f"Time taken for building Decoder: {_td:.2f} seconds.")
+    print(f"Exported model size: {get_export_size(args.output_dir)}")
     
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--output_dir', type=str)
-    parser.add_argument('--model_name', type=str)
     parser.add_argument('--log_level', type=str)
     args = parser.parse_args()
 
     trt_build_args = load_trt_build_config(args.output_dir)
 
-    console.print(f"\n")
-    console.rule(f"[bold red][ Building TRT Engine for {args.model_name.upper()} ]")
-    console.print(f"[TRTBuilderConfig]:")
-    console.print(vars(trt_build_args))
+    print(f"[TRTBuilderConfig]:")
+    print(vars(trt_build_args))
     
-    run(model_name=args.model_name, args=trt_build_args, log_level=args.log_level)
+    run(args=trt_build_args, log_level=args.log_level)
