@@ -127,6 +127,13 @@ def build_trt_engine(model_name='large-v2', args=None, force=False, log_level='e
 
     console.print(f"Exporting Model To TensorRT Engine (3-6 mins)")
     with RunningStatus("Exporting TRT Engine", console=console):
-        console.print(os.popen(f"python3 -m whisper_s2t.backends.tensorrt.engine_builder.builder --output_dir='{args.output_dir}' --log_level='{log_level}'").read())
+        out_logs = os.popen(f"python3 -m whisper_s2t.backends.tensorrt.engine_builder.builder --output_dir='{args.output_dir}' --log_level='{log_level}'").read().split("\n")
+        print_flag = False
+        for line in out_logs:
+            if print_flag:
+                console.print(line)
+            elif 'TRTBuilderConfig' in line:
+                print_flag = True
+                console.print("[TRTBuilderConfig]:")
 
     return args.output_dir
