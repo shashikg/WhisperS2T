@@ -1,4 +1,20 @@
-# WhisperS2T ⚡
+<h1 align="center"> WhisperS2T ⚡ </h1>
+<p align="center"><b>An Optimized Speech-to-Text Pipeline for the Whisper Model Supporting Multiple Inference Engine!</b></p>
+<p align="center">
+    <a href="https://github.com/shashikg/WhisperS2T/actions">
+        <img alt="Downloads" src="https://static.pepy.tech/personalized-badge/whisper-s2t?period=total&units=international_system&left_color=grey&right_color=brightgreen&left_text=downloads" />
+    </a>
+    <a href="https://pepy.tech/project/nemo-toolkit">
+        <img alt="GitHub Contributors" src="https://img.shields.io/github/contributors/shashikg/WhisperS2T" />
+    </a>
+    <a href="https://badge.fury.io/py/nemo-toolkit">
+        <img alt="PyPi Release Version" src="https://badge.fury.io/py/whisper-s2t.svg" />
+    </a>
+    <a href="https://github.com/shashikg/WhisperS2T/issues">
+        <img alt="Issues" src="https://img.shields.io/github/issues/shashikg/WhisperS2T?color=0088ff" />
+    </a>
+</p>
+<hr><br>
 
 WhisperS2T is an optimized lightning-fast speech-to-text pipeline tailored for the whisper model! It's designed to be exceptionally fast, boasting a 1.5X speed improvement over WhisperX and a 2X speed boost compared to HuggingFace Pipeline with FlashAttention 2 (Insanely Fast Whisper). Moreover, it includes several heuristics to enhance transcription accuracy. 
 
@@ -32,8 +48,11 @@ Stay tuned for a technical report comparing WhisperS2T against other whisper pip
 - ⏱️ **Dynamic Time Length Support (Experimental):** Process variable-length inputs in a given input batch instead of fixed 30 seconds, providing flexibility and saving computation time during transcription. (Only with CTranslate2 backend)
 
 
-
 ## Getting Started
+
+### From Docker Container
+
+Work on ready to use docker container is in progress...
 
 ### Installation
 
@@ -55,7 +74,19 @@ Or to install from latest commit in this repo:
 pip install -U git+https://github.com/shashikg/WhisperS2T.git
 ```
 
+**To use TensorRT-LLM Backend**
+
+For TensortRT-LLM backend, you will need to install TensorRT and TensorRT-LLM. 
+
+```sh
+bash <repo_dir>/install_tensorrt.sh
+```
+
+For most of the system the given bash script should work, if it doesn't please follow the official TensorRT-LLM instructions [here](https://github.com/NVIDIA/TensorRT-LLM/tree/main).
+
 ### Usage
+
+#### CTranslate2 Backend
 
 ```py
 import whisper_s2t
@@ -89,6 +120,34 @@ To use word alignment load the model using this:
 
 ```py
 model = whisper_s2t.load_model("large-v2", asr_options={'word_timestamps': True})
+```
+
+#### TensorRT-LLM Backend
+
+```py
+import whisper_s2t
+
+model = whisper_s2t.load_model(model_identifier="large-v2", backend='TensorRT-LLM')
+
+files = ['data/KINCAID46/audio/1.wav']
+lang_codes = ['en']
+tasks = ['transcribe']
+initial_prompts = [None]
+
+out = model.transcribe_with_vad(files,
+                                lang_codes=lang_codes,
+                                tasks=tasks,
+                                initial_prompts=initial_prompts,
+                                batch_size=24)
+
+print(out[0][0])
+"""
+[Console Output]
+
+{'text': "Let's bring in Phil Mackie who is there at the palace. We're looking at Teresa and Philip May. Philip, can you see how he's being transferred from the helicopters? It looks like, as you said, the beast. It's got its headlights on because the sun is beginning to set now, certainly sinking behind some clouds. It's about a quarter of a mile away down the Grand Drive", 
+ 'start_time': 0.0, 
+ 'end_time': 24.8}
+"""
 ```
 
 Check this [Documentation](docs.md) for more details.
