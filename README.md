@@ -1,4 +1,4 @@
-<center><h1> WhisperS2T ⚡ </h1></center>
+<h1 align="center"> WhisperS2T ⚡ </h1>
 <p align="center"><b>An Optimized Speech-to-Text Pipeline for the Whisper Model Supporting Multiple Inference Engine!</b></p>
 <p align="center">
     <a href="https://github.com/shashikg/WhisperS2T/actions">
