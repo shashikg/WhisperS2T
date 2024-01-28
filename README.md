@@ -36,7 +36,7 @@ Checkout the Google Colab notebooks provided here: [notebooks](notebooks)
 
 Stay tuned for a technical report comparing WhisperS2T against other whisper pipelines. Meanwhile, check some quick benchmarks on A30 GPU. See `scripts/` directory for the benchmarking scripts that I used.
 
-![A30 Benchmark](https://github.com/shashikg/WhisperS2T/assets/22556187/c206ef88-98fa-4ac5-b413-9c0b957a8e58)
+![A30 Benchmark](https://github.com/shashikg/WhisperS2T/assets/22556187/caecbb38-b69e-4daa-bcdc-16beb9456de5)
 
 **NOTE:** I conducted all the benchmarks using the `without_timestamps` parameter set as `True`. Adjusting this parameter to `False` may enhance the Word Error Rate (WER) of the HuggingFace pipeline but at the expense of increased inference time. Notably, the improvements in inference speed were achieved solely through a **superior pipeline design**, without any specific optimization made to the backend inference engines (such as CTranslate2, FlashAttention2, etc.). For instance, WhisperS2T (utilizing FlashAttention2) demonstrates significantly superior inference speed compared to the HuggingFace pipeline (also using FlashAttention2), despite both leveraging the same inference engine—HuggingFace whisper model with FlashAttention2. Additionally, there is a noticeable difference in the WER as well.
 
