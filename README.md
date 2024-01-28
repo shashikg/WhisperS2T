@@ -4,10 +4,10 @@
     <a href="https://github.com/shashikg/WhisperS2T/actions">
         <img alt="Downloads" src="https://static.pepy.tech/personalized-badge/whisper-s2t?period=total&units=international_system&left_color=grey&right_color=brightgreen&left_text=downloads" />
     </a>
-    <a href="https://pepy.tech/project/nemo-toolkit">
+    <a href="https://pepy.tech/project/whisper-s2t">
         <img alt="GitHub Contributors" src="https://img.shields.io/github/contributors/shashikg/WhisperS2T" />
     </a>
-    <a href="https://badge.fury.io/py/nemo-toolkit">
+    <a href="https://badge.fury.io/py/whisper-s2t">
         <img alt="PyPi Release Version" src="https://badge.fury.io/py/whisper-s2t.svg" />
     </a>
     <a href="https://github.com/shashikg/WhisperS2T/issues">
