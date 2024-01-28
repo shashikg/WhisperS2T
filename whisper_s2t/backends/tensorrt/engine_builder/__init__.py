@@ -123,7 +123,7 @@ def build_trt_engine(model_name='large-v2', args=None, force=False, log_level='e
     os.system(f"cp {tokenizer_path} {args.output_dir}/tokenizer.json")
     save_trt_build_configs(args)
 
-    with console.status(f"[Exporting Model To TensorRT Engine]", spinner='bouncingBar'):
+    with console.status(f"[Exporting Model To TensorRT Engine (3-6 mins)]", spinner='bouncingBar'):
         console.print(os.popen(f"python3 -m whisper_s2t.backends.tensorrt.engine_builder.builder --output_dir='{args.output_dir}' --log_level='{log_level}'").read())
 
     return args.output_dir
