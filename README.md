@@ -16,7 +16,7 @@
 </p>
 <hr><br>
 
-WhisperS2T is an optimized lightning-fast open-sourced **Speech-to-Text** (ASR) pipeline. It is tailored for the whisper model to provide faster whisper transcription. It's designed to be exceptionally fast than other implementation, boasting a **2.3X speed improvement over [WhisperX](https://github.com/m-bain/whisperX/tree/main) and a 3X speed boost compared to HuggingFace Pipeline with FlashAttention 2 (Insanely Fast Whisper)**. Moreover, it includes several heuristics to enhance transcription accuracy. 
+WhisperS2T is an optimized lightning-fast open-sourced **Speech-to-Text** (ASR) pipeline. It is tailored for the whisper model to provide faster whisper transcription. It's designed to be exceptionally fast than other implementation, boasting a **2.3X speed improvement over [WhisperX](https://github.com/m-bain/whisperX/tree/main) and a 3X speed boost compared to [HuggingFace Pipeline](https://huggingface.co/openai/whisper-large-v2) with FlashAttention 2 ([Insanely Fast Whisper](https://github.com/Vaibhavs10/insanely-fast-whisper))**. Moreover, it includes several heuristics to enhance transcription accuracy. 
 
 [**Whisper**](https://github.com/openai/whisper) is a general-purpose speech recognition model developed by OpenAI and not me. It is trained on a large dataset of diverse audio and is also a multitasking model that can perform multilingual speech recognition, speech translation, and language identification.
 
