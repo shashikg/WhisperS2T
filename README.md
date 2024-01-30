@@ -16,12 +16,12 @@
 </p>
 <hr><br>
 
-WhisperS2T is an optimized lightning-fast speech-to-text pipeline tailored for the whisper model! It's designed to be exceptionally fast, boasting a **2.3X speed improvement over WhisperX and a 3X speed boost compared to HuggingFace Pipeline with FlashAttention 2 (Insanely Fast Whisper)**. Moreover, it includes several heuristics to enhance transcription accuracy. 
+WhisperS2T is an optimized lightning-fast open-sourced **Speech-to-Text** (ASR) pipeline. It is tailored for the whisper model to provide faster whisper transcription. It's designed to be exceptionally fast than other implementation, boasting a **2.3X speed improvement over [WhisperX](https://github.com/m-bain/whisperX/tree/main) and a 3X speed boost compared to HuggingFace Pipeline with FlashAttention 2 (Insanely Fast Whisper)**. Moreover, it includes several heuristics to enhance transcription accuracy. 
 
 [**Whisper**](https://github.com/openai/whisper) is a general-purpose speech recognition model developed by OpenAI and not me. It is trained on a large dataset of diverse audio and is also a multitasking model that can perform multilingual speech recognition, speech translation, and language identification.
 
 
-## News
+## Release Notes
 
 * [Jan 28, 2024]: Added support for TensorRT-LLM backend.
 * [Dec 23, 2023]: Added support for word alignment for CTranslate2 backend (check [benchmark](https://github.com/shashikg/WhisperS2T/releases/tag/v1.2.0)).
@@ -31,6 +31,14 @@ WhisperS2T is an optimized lightning-fast speech-to-text pipeline tailored for t
 ## Quickstart
 
 Checkout the Google Colab notebooks provided here: [notebooks](notebooks)
+
+## Future Roadmaps
+
+- [ ] Ready to use docker container.
+- [ ] WhisperS2T-Server: Optimized end-to-end deployment ready server codebase.
+- [ ] In depth documentation, use github pages to host it.
+- [ ] Explore possibility of integrating Meta's SeamlessM4T model.
+- [ ] Add more datasets for WER benchmarking.
 
 ## Benchmark and Technical Report
 
