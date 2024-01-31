@@ -8,3 +8,4 @@ accelerate
 optimum
 transformers
 openai-whisper
+nvidia-ml-py
