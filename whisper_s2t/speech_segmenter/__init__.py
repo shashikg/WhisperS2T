@@ -124,7 +124,10 @@ class SpeechSegmenter:
         speech_probs = self.vad_model(audio_signal)
         start_ends = self.get_speech_segments(speech_probs)
         
-        start_ends[0][0] = max(0.0, start_ends[0][0]) # fix edges
-        start_ends[-1][1] = min(audio_duration, start_ends[-1][1]) # fix edges
+        if len(start_ends):
+            start_ends[0][0] = max(0.0, start_ends[0][0]) # fix edges
+            start_ends[-1][1] = min(audio_duration, start_ends[-1][1]) # fix edges
+        else:
+            start_ends = [[0.0, 1.0]] # Quick fix for silent audio.
         
         return start_ends, audio_signal
