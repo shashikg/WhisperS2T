@@ -1,6 +1,7 @@
 import os
 from platformdirs import user_cache_dir
 
+from .utils import write_outputs
 
 BASE_PATH = os.path.dirname(__file__)
 
