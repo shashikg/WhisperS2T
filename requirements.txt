@@ -1,6 +1,8 @@
 tqdm
+rich
 torch
 numpy
+platformdirs
 ctranslate2
 tokenizers
 huggingface-hub

@@ -116,7 +116,7 @@ out = model.transcribe_with_vad(files,
                                 initial_prompts=initial_prompts,
                                 batch_size=32)
 
-print(out[0][0])
+print(out[0][0]) # Print first utterance for first file
 """
 [Console Output]
 
@@ -152,7 +152,7 @@ out = model.transcribe_with_vad(files,
                                 initial_prompts=initial_prompts,
                                 batch_size=24)
 
-print(out[0][0])
+print(out[0][0]) # Print first utterance for first file
 """
 [Console Output]
 
