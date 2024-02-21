@@ -1,4 +1,5 @@
 tqdm
+rich
 torch
 numpy
 platformdirs
