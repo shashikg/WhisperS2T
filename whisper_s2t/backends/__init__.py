@@ -22,6 +22,17 @@ class NoneTokenizer:
         return [0]
 
 
+def fix_batch_param(param, default_value, N):
+    if param is None:
+        param = N*[default_value]
+    elif type(param) == type(default_value):
+        param = N*[param]
+    elif len(param) != N:
+        param = N*[param[0]]
+
+    return param
+
+
 class WhisperModel(ABC):
     def __init__(self,
                  tokenizer=None,
@@ -119,14 +130,9 @@ class WhisperModel(ABC):
         
         # return responses
 
-        if lang_codes == None:
-            lang_codes = len(audio_files)*['en']
-            
-        if tasks == None:
-            tasks = len(audio_files)*['transcribe']
-        
-        if initial_prompts == None:
-            initial_prompts = len(audio_files)*[None]
+        lang_codes = fix_batch_param(lang_codes, 'en', len(audio_files))
+        tasks = fix_batch_param(tasks, 'transcribe', len(audio_files))
+        initial_prompts = fix_batch_param(initial_prompts, None, len(audio_files))
             
         responses = [[] for _ in audio_files]
         
@@ -151,15 +157,10 @@ class WhisperModel(ABC):
 
     @torch.no_grad()
     def transcribe_with_vad(self, audio_files, lang_codes=None, tasks=None, initial_prompts=None, batch_size=8):
-        
-        if lang_codes == None:
-            lang_codes = len(audio_files)*['en']
-            
-        if tasks == None:
-            tasks = len(audio_files)*['transcribe']
-        
-        if initial_prompts == None:
-            initial_prompts = len(audio_files)*[None]
+
+        lang_codes = fix_batch_param(lang_codes, 'en', len(audio_files))
+        tasks = fix_batch_param(tasks, 'transcribe', len(audio_files))
+        initial_prompts = fix_batch_param(initial_prompts, None, len(audio_files))
             
         responses = [[] for _ in audio_files]
         
