@@ -64,7 +64,30 @@ Stay tuned for a technical report comparing WhisperS2T against other whisper pip
 
 ### From Docker Container
 
+#### Prebuilt containers
+
 Work on ready to use docker container is in progress...
+
+#### Building your own container
+
+Build from `main` branch.
+
+```sh
+docker build --build-arg WHISPER_S2T_VER=main --build-arg SKIP_TENSORRT_LLM=1 -t whisper_s2t:main .
+```
+
+Build from specific release `v1.3.0`.
+
+```sh
+git checkout v1.3.0
+docker build --build-arg WHISPER_S2T_VER=v1.3.0 --build-arg SKIP_TENSORRT_LLM=1 -t whisper_s2t:1.3.0 .
+```
+
+To build the container with TensorRT-LLM support:
+
+```sh
+docker build --build-arg WHISPER_S2T_VER=main -t whisper_s2t:dev-trtllm .
+```
 
 ### Installation
 
