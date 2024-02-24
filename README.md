@@ -86,7 +86,7 @@ docker build --build-arg WHISPER_S2T_VER=v1.3.0 --build-arg SKIP_TENSORRT_LLM=1 
 To build the container with TensorRT-LLM support:
 
 ```sh
-docker build --build-arg WHISPER_S2T_VER=main -t whisper_s2t:dev-trtllm .
+docker build --build-arg WHISPER_S2T_VER=main -t whisper_s2t:main-trtllm .
 ```
 
 ### Installation
