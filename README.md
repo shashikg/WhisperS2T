@@ -86,6 +86,12 @@ Or to install from latest commit in this repo:
 pip install -U git+https://github.com/shashikg/WhisperS2T.git
 ```
 
+**NOTE:** If your CUDNN and CUBLAS installation is done using pip wheel, you can run the following to add CUDNN path to `LD_LIBRARY_PATH`:
+
+```sh
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:`python3 -c 'import os; import nvidia.cublas.lib; import nvidia.cudnn.lib; print(os.path.dirname(nvidia.cublas.lib.__file__) + ":" + os.path.dirname(nvidia.cudnn.lib.__file__))'`
+```
+
 **To use TensorRT-LLM Backend**
 
 For TensortRT-LLM backend, you will need to install TensorRT and TensorRT-LLM. 
