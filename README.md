@@ -98,8 +98,19 @@ docker build --build-arg WHISPER_S2T_VER=main -t whisper_s2t:main-trtllm .
 
 Install audio packages required for resampling and loading audio files.
 
+#### For Ubuntu
 ```sh
 apt-get install -y libsndfile1 ffmpeg
+```
+
+#### For MAC
+```sh
+brew install ffmpeg
+```
+
+#### For Ubuntu/MAC/Windows/AnyOther With Conda for Python
+```sh
+conda install conda-forge::ffmpeg
 ```
 
 To install or update to the latest released version of WhisperS2T use the following command:
@@ -128,7 +139,7 @@ For TensortRT-LLM backend, you will need to install TensorRT and TensorRT-LLM.
 bash <repo_dir>/install_tensorrt.sh
 ```
 
-For most of the system the given bash script should work, if it doesn't please follow the official TensorRT-LLM instructions [here](https://github.com/NVIDIA/TensorRT-LLM/tree/main).
+For most of the debian system the given bash script should work, if it doesn't/other system please follow the official TensorRT-LLM instructions [here](https://github.com/NVIDIA/TensorRT-LLM/tree/main).
 
 ### Usage
 
