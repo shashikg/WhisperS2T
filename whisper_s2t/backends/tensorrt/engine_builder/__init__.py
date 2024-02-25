@@ -96,7 +96,7 @@ def build_trt_engine(model_name='large-v2', args=None, force=False, log_level='e
     if force:
         console.print(f"'force' flag is 'True'. Removing previous build.")
         with RunningStatus("Cleaning", console=console):
-            os.system(f"rm -rf {args.output_dir}")
+            os.system(f"rm -rf '{args.output_dir}'")
         
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
@@ -117,12 +117,12 @@ def build_trt_engine(model_name='large-v2', args=None, force=False, log_level='e
                 
         if _failed_export:
             console.print(f"Export directory exists but seems like a failed export, regenerating the engine files.")
-            os.system(f"rm -rf {args.output_dir}")
+            os.system(f"rm -rf '{args.output_dir}'")
             os.makedirs(args.output_dir)
         else:
             return args.output_dir
     
-    os.system(f"cp {tokenizer_path} {args.output_dir}/tokenizer.json")
+    os.system(f"cp '{tokenizer_path}' '{args.output_dir}/tokenizer.json'")
     save_trt_build_configs(args)
 
     with RunningStatus("Exporting Model To TensorRT Engine (3-6 mins)", console=console):
