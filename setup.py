@@ -8,7 +8,7 @@ with open("requirements.txt", "r", encoding="utf-8") as f:
 
 setup(
     name="whisper_s2t",
-    version="1.3.0",
+    version="1.3.1",
     description="An Optimized Speech-to-Text Pipeline for the Whisper Model.",
     long_description=long_description,
     long_description_content_type="text/markdown",

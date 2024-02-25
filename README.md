@@ -23,6 +23,7 @@ WhisperS2T is an optimized lightning-fast open-sourced **Speech-to-Text** (ASR) 
 
 ## Release Notes
 
+* [Feb 25, 2024]: Added prebuilt docker images and transcript exporter to `txt, json, tsv, srt, vtt`. (Check complete [release note](https://github.com/shashikg/WhisperS2T/releases/tag/v1.3.1))
 * [Jan 28, 2024]: Added support for TensorRT-LLM backend.
 * [Dec 23, 2023]: Added support for word alignment for CTranslate2 backend (check [benchmark](https://github.com/shashikg/WhisperS2T/releases/tag/v1.2.0)).
 * [Dec 19, 2023]: Added support for Whisper-Large-V3 and Distil-Whisper-Large-V2 (check [benchmark](https://github.com/shashikg/WhisperS2T/releases/tag/v1.1.0)).
@@ -34,7 +35,7 @@ Checkout the Google Colab notebooks provided here: [notebooks](notebooks)
 
 ## Future Roadmaps
 
-- [ ] Ready to use docker container.
+- [x] Ready to use docker container.
 - [ ] WhisperS2T-Server: Optimized end-to-end deployment ready server codebase.
 - [ ] In depth documentation, use github pages to host it.
 - [ ] Explore possibility of integrating Meta's SeamlessM4T model.
@@ -66,7 +67,11 @@ Stay tuned for a technical report comparing WhisperS2T against other whisper pip
 
 #### Prebuilt containers
 
-Work on ready to use docker container is in progress...
+```sh
+docker pull shashikg/whisper_s2t:dev-trtllm
+```
+
+Dockerhub repo: [https://hub.docker.com/r/shashikg/whisper_s2t/tags](https://hub.docker.com/r/shashikg/whisper_s2t/tags)
 
 #### Building your own container
 
@@ -89,7 +94,7 @@ To build the container with TensorRT-LLM support:
 docker build --build-arg WHISPER_S2T_VER=main -t whisper_s2t:main-trtllm .
 ```
 
-### Installation
+### Local Installation
 
 Install audio packages required for resampling and loading audio files.
 
