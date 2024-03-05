@@ -1,6 +1,7 @@
 import os
 import wave
 import tempfile
+import subprocess
 import numpy as np
 
 import torch
@@ -16,15 +17,26 @@ silent_file = f"{BASE_PATH}/assets/silent.mp3"
 
 RESAMPLING_ENGINE = 'soxr'
 with tempfile.TemporaryDirectory() as tmpdir:
-    ret_code = os.system(f'ffmpeg -version')
+    ffmpeg_install_link = "https://github.com/shashikg/WhisperS2T?tab=readme-ov-file#for-ubuntu"
+    
+    try: 
+        subprocess.check_output(['ffmpeg', '-version'])
+    except:
+        raise RuntimeError(f"Seems 'ffmpeg' is not installed. Please install ffmpeg before using this package!\nCheck: {ffmpeg_install_link}")
+
+    ret_code = os.system(f'ffmpeg -hide_banner -loglevel panic -i "{silent_file}" -threads 1 -acodec pcm_s16le -ac 1 -af aresample=resampler={RESAMPLING_ENGINE} -ar 1600 "{tmpdir}/tmp.wav" -y')
+
     if ret_code != 0:
-        print(f"Seems 'ffmpeg' is not installed. Please install ffmpeg before using this package!")
-    else:
-        ret_code = os.system(f'ffmpeg -hide_banner -loglevel panic -i {silent_file} -threads 1 -acodec pcm_s16le -ac 1 -af aresample=resampler={RESAMPLING_ENGINE} -ar 1600 {tmpdir}/tmp.wav -y')
+        print(f"'ffmpeg' failed with soxr resampler, trying 'swr' resampler.")
+        RESAMPLING_ENGINE = 'swr'
+
+        ret_code = os.system(f'ffmpeg -hide_banner -loglevel panic -i "{silent_file}" -threads 1 -acodec pcm_s16le -ac 1 -af aresample=resampler={RESAMPLING_ENGINE} -ar 1600 "{tmpdir}/tmp.wav" -y')
 
         if ret_code != 0:
-            print(f"'ffmpeg' is not built with soxr resampler, using 'swr' resampler. This may degrade performance.")
-            RESAMPLING_ENGINE = 'swr'
+            raise RuntimeError(f"Seems 'ffmpeg' is not installed properly. Please uninstall and install it again.\nCheck: {ffmpeg_install_link}")
+        else:
+            print(f"Using 'swr' resampler. This may degrade performance.")
+        
 
 def load_audio(input_file, sr=16000, return_duration=False):
     
@@ -38,7 +50,7 @@ def load_audio(input_file, sr=16000, return_duration=False):
     except:
         with tempfile.TemporaryDirectory() as tmpdir:
             wav_file = f"{tmpdir}/tmp.wav"
-            ret_code = os.system(f'ffmpeg -hide_banner -loglevel panic -i {input_file} -threads 1 -acodec pcm_s16le -ac 1 -af aresample=resampler={RESAMPLING_ENGINE} -ar {sr} {wav_file} -y')
+            ret_code = os.system(f'ffmpeg -hide_banner -loglevel panic -i "{input_file}" -threads 1 -acodec pcm_s16le -ac 1 -af aresample=resampler={RESAMPLING_ENGINE} -ar {sr} "{wav_file}" -y')
             if ret_code != 0: raise RuntimeError("ffmpeg failed to resample the input audio file, make sure ffmpeg is compiled properly!")
         
             with wave.open(wav_file, 'rb') as wf:

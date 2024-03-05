@@ -18,4 +18,5 @@ rm -rf /tmp/mpi4py*
 
 echo ""
 echo "###########################[ Installing TensorRT-LLM ]###########################"
-pip3 install tensorrt_llm==0.8.0.dev2024012301 --extra-index-url https://pypi.nvidia.com
+pip3 install --no-cache-dir -U torch==2.1.2
+pip3 install --no-cache-dir tensorrt_llm==0.8.0.dev2024012301 --extra-index-url https://pypi.nvidia.com

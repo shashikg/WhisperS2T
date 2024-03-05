@@ -23,6 +23,7 @@ WhisperS2T is an optimized lightning-fast open-sourced **Speech-to-Text** (ASR) 
 
 ## Release Notes
 
+* [Feb 25, 2024]: Added prebuilt docker images and transcript exporter to `txt, json, tsv, srt, vtt`. (Check complete [release note](https://github.com/shashikg/WhisperS2T/releases/tag/v1.3.1))
 * [Jan 28, 2024]: Added support for TensorRT-LLM backend.
 * [Dec 23, 2023]: Added support for word alignment for CTranslate2 backend (check [benchmark](https://github.com/shashikg/WhisperS2T/releases/tag/v1.2.0)).
 * [Dec 19, 2023]: Added support for Whisper-Large-V3 and Distil-Whisper-Large-V2 (check [benchmark](https://github.com/shashikg/WhisperS2T/releases/tag/v1.1.0)).
@@ -34,7 +35,7 @@ Checkout the Google Colab notebooks provided here: [notebooks](notebooks)
 
 ## Future Roadmaps
 
-- [ ] Ready to use docker container.
+- [x] Ready to use docker container.
 - [ ] WhisperS2T-Server: Optimized end-to-end deployment ready server codebase.
 - [ ] In depth documentation, use github pages to host it.
 - [ ] Explore possibility of integrating Meta's SeamlessM4T model.
@@ -64,14 +65,52 @@ Stay tuned for a technical report comparing WhisperS2T against other whisper pip
 
 ### From Docker Container
 
-Work on ready to use docker container is in progress...
+#### Prebuilt containers
 
-### Installation
+```sh
+docker pull shashikg/whisper_s2t:dev-trtllm
+```
+
+Dockerhub repo: [https://hub.docker.com/r/shashikg/whisper_s2t/tags](https://hub.docker.com/r/shashikg/whisper_s2t/tags)
+
+#### Building your own container
+
+Build from `main` branch.
+
+```sh
+docker build --build-arg WHISPER_S2T_VER=main --build-arg SKIP_TENSORRT_LLM=1 -t whisper_s2t:main .
+```
+
+Build from specific release `v1.3.0`.
+
+```sh
+git checkout v1.3.0
+docker build --build-arg WHISPER_S2T_VER=v1.3.0 --build-arg SKIP_TENSORRT_LLM=1 -t whisper_s2t:1.3.0 .
+```
+
+To build the container with TensorRT-LLM support:
+
+```sh
+docker build --build-arg WHISPER_S2T_VER=main -t whisper_s2t:main-trtllm .
+```
+
+### Local Installation
 
 Install audio packages required for resampling and loading audio files.
 
+#### For Ubuntu
 ```sh
 apt-get install -y libsndfile1 ffmpeg
+```
+
+#### For MAC
+```sh
+brew install ffmpeg
+```
+
+#### For Ubuntu/MAC/Windows/AnyOther With Conda for Python
+```sh
+conda install conda-forge::ffmpeg
 ```
 
 To install or update to the latest released version of WhisperS2T use the following command:
@@ -86,6 +125,12 @@ Or to install from latest commit in this repo:
 pip install -U git+https://github.com/shashikg/WhisperS2T.git
 ```
 
+**NOTE:** If your CUDNN and CUBLAS installation is done using pip wheel, you can run the following to add CUDNN path to `LD_LIBRARY_PATH`:
+
+```sh
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:`python3 -c 'import os; import nvidia.cublas.lib; import nvidia.cudnn.lib; print(os.path.dirname(nvidia.cublas.lib.__file__) + ":" + os.path.dirname(nvidia.cudnn.lib.__file__))'`
+```
+
 **To use TensorRT-LLM Backend**
 
 For TensortRT-LLM backend, you will need to install TensorRT and TensorRT-LLM. 
@@ -94,7 +139,7 @@ For TensortRT-LLM backend, you will need to install TensorRT and TensorRT-LLM.
 bash <repo_dir>/install_tensorrt.sh
 ```
 
-For most of the system the given bash script should work, if it doesn't please follow the official TensorRT-LLM instructions [here](https://github.com/NVIDIA/TensorRT-LLM/tree/main).
+For most of the debian system the given bash script should work, if it doesn't/other system please follow the official TensorRT-LLM instructions [here](https://github.com/NVIDIA/TensorRT-LLM/tree/main).
 
 ### Usage
 
@@ -116,7 +161,7 @@ out = model.transcribe_with_vad(files,
                                 initial_prompts=initial_prompts,
                                 batch_size=32)
 
-print(out[0][0])
+print(out[0][0]) # Print first utterance for first file
 """
 [Console Output]
 
@@ -152,7 +197,7 @@ out = model.transcribe_with_vad(files,
                                 initial_prompts=initial_prompts,
                                 batch_size=24)
 
-print(out[0][0])
+print(out[0][0]) # Print first utterance for first file
 """
 [Console Output]
 
@@ -172,6 +217,7 @@ Check this [Documentation](docs.md) for more details.
 - [**HuggingFace Team**](https://huggingface.co/docs/transformers/model_doc/whisper): Thanks to the HuggingFace Team for their integration of FlashAttention2 and the Whisper model in the transformers library.
 - [**CTranslate2 Team**](https://github.com/OpenNMT/CTranslate2/): Thanks to the CTranslate2 Team for providing a faster inference engine for Transformers architecture.
 - [**NVIDIA NeMo Team**](https://github.com/NVIDIA/NeMo): Thanks to the NVIDIA NeMo Team for their contribution of the open-source VAD model used in this pipeline.
+- [**NVIDIA TensorRT-LLM Team**](https://github.com/NVIDIA/TensorRT-LLM/): Thanks to the NVIDIA TensorRT-LLM Team for their awesome LLM inference optimizations.
 
 
 ## License

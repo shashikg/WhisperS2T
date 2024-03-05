@@ -22,6 +22,17 @@ class NoneTokenizer:
         return [0]
 
 
+def fix_batch_param(param, default_value, N):
+    if param is None:
+        param = N*[default_value]
+    elif type(param) == type(default_value):
+        param = N*[param]
+    elif len(param) != N:
+        param = N*[param[0]]
+
+    return param
+
+
 class WhisperModel(ABC):
     def __init__(self,
                  tokenizer=None,
@@ -102,34 +113,54 @@ class WhisperModel(ABC):
     @torch.no_grad()
     def transcribe(self, audio_files, lang_codes=None, tasks=None, initial_prompts=None, batch_size=8):
         
-        if lang_codes == None:
-            lang_codes = len(audio_files)*['en']
+        # if lang_codes == None:
+        #     lang_codes = len(audio_files)*['en']
             
-        if tasks == None:
-            tasks = len(audio_files)*['transcribe']
+        # if tasks == None:
+        #     tasks = len(audio_files)*['transcribe']
         
-        if initial_prompts == None:
-            initial_prompts = len(audio_files)*[None]
+        # if initial_prompts == None:
+        #     initial_prompts = len(audio_files)*[None]
             
-        responses = []
-        for signals, prompts, seq_len in self.data_loader(audio_files, lang_codes, tasks, initial_prompts, batch_size=batch_size, use_vad=False):
-            mels, seq_len = self.preprocessor(signals, seq_len)
-            res = self.generate_segment_batched(mels.to(self.device), prompts)
-            responses.extend(res)
+        # responses = []
+        # for signals, prompts, seq_len in self.data_loader(audio_files, lang_codes, tasks, initial_prompts, batch_size=batch_size, use_vad=False):
+        #     mels, seq_len = self.preprocessor(signals, seq_len)
+        #     res = self.generate_segment_batched(mels.to(self.device), prompts)
+        #     responses.extend(res)
+        
+        # return responses
+
+        lang_codes = fix_batch_param(lang_codes, 'en', len(audio_files))
+        tasks = fix_batch_param(tasks, 'transcribe', len(audio_files))
+        initial_prompts = fix_batch_param(initial_prompts, None, len(audio_files))
+            
+        responses = [[] for _ in audio_files]
+        
+        pbar_pos = 0
+        with tqdm(total=len(audio_files)*100, desc=f"Transcribing") as pbar:
+            for signals, prompts, seq_len, seg_metadata, pbar_update in self.data_loader(audio_files, lang_codes, tasks, initial_prompts, batch_size=batch_size, use_vad=False):
+                mels, seq_len = self.preprocessor(signals, seq_len)
+                res = self.generate_segment_batched(mels.to(self.device), prompts, seq_len, seg_metadata)
+
+                for res_idx, _seg_metadata in enumerate(seg_metadata):
+                    responses[_seg_metadata['file_id']].append({**res[res_idx],
+                                                                'start_time': round(_seg_metadata['start_time'], 3),
+                                                                'end_time': round(_seg_metadata['end_time'], 3)})
+                
+                if (pbar_pos) <= pbar.total:
+                    pbar_pos += pbar_update
+                    pbar.update(pbar_update)
+            
+            pbar.update(pbar.total-pbar_pos)
         
         return responses
-    
+
     @torch.no_grad()
     def transcribe_with_vad(self, audio_files, lang_codes=None, tasks=None, initial_prompts=None, batch_size=8):
-        
-        if lang_codes == None:
-            lang_codes = len(audio_files)*['en']
-            
-        if tasks == None:
-            tasks = len(audio_files)*['transcribe']
-        
-        if initial_prompts == None:
-            initial_prompts = len(audio_files)*[None]
+
+        lang_codes = fix_batch_param(lang_codes, 'en', len(audio_files))
+        tasks = fix_batch_param(tasks, 'transcribe', len(audio_files))
+        initial_prompts = fix_batch_param(initial_prompts, None, len(audio_files))
             
         responses = [[] for _ in audio_files]
         
