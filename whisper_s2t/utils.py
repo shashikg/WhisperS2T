@@ -56,7 +56,7 @@ def get_single_sentence_in_one_utterance(transcript, end_punct_marks=["?", "."])
         return transcript
 
     new_transcript = []
-        
+
     all_words = []
     for utt in transcript:
         all_words += utt['word_timestamps']
@@ -89,7 +89,7 @@ def ExportVTT(transcript, file, single_sentence_in_one_utterance=False, end_punc
     if single_sentence_in_one_utterance:
         transcript = get_single_sentence_in_one_utterance(transcript, end_punct_marks=end_punct_marks)
 
-    with open(file, 'w') as f:
+    with open(file, 'w', encoding="utf-8") as f:
         f.write("WEBVTT\n\n")
         for _utt in transcript:
             f.write(f"{format_timestamp(_utt['start_time'])} --> {format_timestamp(_utt['end_time'])}\n{_utt['text']}\n\n")
@@ -100,9 +100,9 @@ def ExportSRT(transcript, file, single_sentence_in_one_utterance=False, end_punc
     if single_sentence_in_one_utterance:
         transcript = get_single_sentence_in_one_utterance(transcript, end_punct_marks=end_punct_marks)
 
-    with open(file, 'w') as f:
+    with open(file, 'w', encoding="utf-8") as f:
         for i, _utt in enumerate(transcript):
-            
+
             f.write(f"{i}\n")
             f.write(f"{format_timestamp(_utt['start_time'], always_include_hours=True, decimal_marker=',')} --> ")
             f.write(f"{format_timestamp(_utt['end_time'], always_include_hours=True, decimal_marker=',')}\n")
@@ -111,7 +111,7 @@ def ExportSRT(transcript, file, single_sentence_in_one_utterance=False, end_punc
 
 def ExportJSON(transcript, file):
 
-    with open(file, 'w') as f:
+    with open(file, 'w', encoding="utf-8") as f:
         f.write(json.dumps(transcript))
 
 
@@ -125,7 +125,7 @@ def ExportTSV(transcript, file, single_sentence_in_one_utterance=False, end_punc
         for k in transcript[0].keys():
             if k not in keys: keys.append(k)
 
-    with open(file, 'w') as f:
+    with open(file, 'w', encoding="utf-8") as f:
         f.write("\t".join(keys))
         for _utt in transcript:
             f.write("\n" + "\t".join([_utt[k].strip().replace("\t", " ") if k == 'text' else str(_utt[k]) for k in keys]))
@@ -136,7 +136,7 @@ def ExportTXT(transcript, file, single_sentence_in_one_utterance=False, end_punc
     if single_sentence_in_one_utterance:
         transcript = get_single_sentence_in_one_utterance(transcript, end_punct_marks=end_punct_marks)
 
-    with open(file, 'w') as f:
+    with open(file, 'w', encoding="utf-8") as f:
         for _utt in transcript:
             f.write(f"[{format_timestamp(_utt['start_time'])} --> {format_timestamp(_utt['end_time'])}]: {_utt['text']}\n\n")
 
@@ -164,6 +164,6 @@ def write_outputs(transcripts, format='json', ip_files=None, op_files=None, save
                 base_name = ".".join(os.path.basename(_ip_fn).split(".")[:-1])
                 op_files.append(os.path.join(save_dir, f"{i}_{base_name}.{format}"))
 
-    
+
     for transcript, file_name in zip(transcripts, op_files):
         TranscriptExporter[format](transcript, file_name, **kwargs)
