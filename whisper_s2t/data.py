@@ -120,7 +120,6 @@ class WhisperDataset(torch.utils.data.Dataset):
             
         return audio, prompt, initial_prompt_tokens, seq_len
 
-
 class WhisperDataLoader:
     def __init__(self, device, tokenizer, speech_segmenter, 
                  dta_padding=3.0, 
@@ -128,7 +127,8 @@ class WhisperDataLoader:
                  max_speech_len=29.0, 
                  max_initial_prompt_len=223,
                  merge_chunks=True,
-                 use_dynamic_time_axis=False):
+                 use_dynamic_time_axis=False,
+                 file_io=True):
         
         self.device = device
         self.tokenizer = tokenizer
@@ -140,6 +140,7 @@ class WhisperDataLoader:
         self.max_initial_prompt_len = max_initial_prompt_len
         self.use_dynamic_time_axis = use_dynamic_time_axis
         self.merge_chunks = merge_chunks
+        self.audio_gen = audio_batch_generator if file_io else lambda x: x
         
     def data_collate_fn(self, batch):
         if self.use_dynamic_time_axis:
@@ -209,7 +210,7 @@ class WhisperDataLoader:
 
         segmented_audio_signal = []
         pbar_update_len = {}
-        for file_id, (audio_signal, lang, task, initial_prompt) in enumerate(zip(audio_batch_generator(audio_files), lang_codes, tasks, initial_prompts)):
+        for file_id, (audio_signal, lang, task, initial_prompt) in enumerate(zip(self.audio_gen(audio_files), lang_codes, tasks, initial_prompts)):
             start_ends, audio_signal = self.speech_segmenter(audio_signal=audio_signal)
             new_segmented_audio_signal = self.get_segmented_audio_signal(start_ends, audio_signal, file_id, lang, task, initial_prompt)
             pbar_update_len[file_id] = 1/len(new_segmented_audio_signal)
@@ -243,7 +244,7 @@ class WhisperDataLoader:
 
         segmented_audio_signal = []
         pbar_update_len = {}
-        for file_id, (audio_signal, lang, task, initial_prompt) in enumerate(zip(audio_batch_generator(audio_files), lang_codes, tasks, initial_prompts)):
+        for file_id, (audio_signal, lang, task, initial_prompt) in enumerate(zip(self.audio_gen(audio_files), lang_codes, tasks, initial_prompts)):
             start_ends, audio_signal = self.basic_segmenter(audio_signal=audio_signal)
             new_segmented_audio_signal = self.get_segmented_audio_signal(start_ends, audio_signal, file_id, lang, task, initial_prompt)
             pbar_update_len[file_id] = 1/len(new_segmented_audio_signal)
