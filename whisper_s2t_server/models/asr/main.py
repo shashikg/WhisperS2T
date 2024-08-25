@@ -94,7 +94,7 @@ def data_loader():
 def start_worker(args):
     Logger.info(f"Starting ASR Model!")
 
-    WhisperModelServer = get_server_backend(backend=args.backend])
+    WhisperModelServer = get_server_backend(backend=args.backend)
     compute_type = 'float16' if args.device == 'cuda' else 'float32'
     ASR_MODEL = WhisperModelServer(args.model_identifier, 
                                    device=args.device, 
