@@ -8,7 +8,7 @@ with open("requirements.txt", "r", encoding="utf-8") as f:
 
 setup(
     name="whisper_s2t",
-    version="1.3.1",
+    version="2.0.0-dev-1",
     description="An Optimized Speech-to-Text Pipeline for the Whisper Model.",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -22,4 +22,9 @@ setup(
         '': ['assets/*'],
     },
     include_package_data=True,
+    entry_points={
+        'console_scripts': [
+            'whisper-s2t-server=whisper_s2t_server.cli:main',
+        ],
+    },
 )
