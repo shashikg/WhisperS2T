@@ -12,11 +12,15 @@ SAVE_DIR = f"{CACHE_DIR}/models/trt"
 os.makedirs(SAVE_DIR, exist_ok=True)
 
 _MODELS = {
+    "medium": "https://openaipublic.azureedge.net/main/whisper/models/345ae4da62f9b3d59415adc60127b97c714f32e89e936602e85993674d08dcb1/medium.pt",
+    "medium.en": "https://openaipublic.azureedge.net/main/whisper/models/d7440d1dc186f76616474e0ff0b3b6b879abc9d1a4926b7adfa41db2d497ab4f/medium.en.pt",
     "large-v2": "https://openaipublic.azureedge.net/main/whisper/models/81f7c96c852ee8fc832187b0132e569d6c3065a3252ed18e56effd0b6a73e524/large-v2.pt",
     "large-v3": "https://openaipublic.azureedge.net/main/whisper/models/e5b1a55b89c1367dacf97e3e19bfd829a01529dbfdeefa8caeb59b3f1b81dadb/large-v3.pt",
 }
 
 _TOKENIZER = {
+    "medium": "https://huggingface.co/Systran/faster-whisper-medium/raw/main/tokenizer.json",
+    "medium.en": "https://huggingface.co/Systran/faster-whisper-medium.en/raw/main/tokenizer.json",
     "large-v2": "https://huggingface.co/Systran/faster-whisper-large-v2/raw/main/tokenizer.json",
     "large-v3": "https://huggingface.co/Systran/faster-whisper-large-v3/raw/main/tokenizer.json",
 }
