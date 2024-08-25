@@ -69,9 +69,12 @@ def stop_server():
         with open(f'{WHISPER_S2T_SERVER_TMP_PATH}/logs/process_pids.txt', 'r') as pid_file:
             lines = pid_file.readlines()
             for line in lines:
-                process_name, pid = line.strip().split(':')
-                print(f"Killing {process_name} with PID: {pid}")
-                os.kill(int(pid), signal.SIGTERM)
+                try:
+                    process_name, pid = line.strip().split(':')
+                    print(f"Killing {process_name} with PID: {pid}")
+                    os.kill(int(pid), signal.SIGTERM)
+                except:
+                    pass
         
         os.remove(f'{WHISPER_S2T_SERVER_TMP_PATH}/logs/process_pids.txt')
     except FileNotFoundError:
