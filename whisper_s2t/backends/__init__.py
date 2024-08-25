@@ -47,7 +47,8 @@ class WhisperModel(ABC):
                  max_speech_len=29.0,
                  max_text_token_len=MAX_TEXT_TOKEN_LENGTH,
                  without_timestamps=True,
-                 speech_segmenter_options={}):
+                 speech_segmenter_options={},
+                 file_io=True):
         
         # Configure Params
         self.device = device
@@ -73,6 +74,7 @@ class WhisperModel(ABC):
             tokenizer = NoneTokenizer()
 
         self.tokenizer = tokenizer
+        self.file_io = file_io
 
         self._init_dependables()
 
@@ -96,7 +98,8 @@ class WhisperModel(ABC):
             max_speech_len=self.max_speech_len, 
             max_initial_prompt_len=self.max_initial_prompt_len, 
             use_dynamic_time_axis=self.use_dynamic_time_axis,
-            merge_chunks=self.merge_chunks
+            merge_chunks=self.merge_chunks,
+            file_io=self.file_io
         )
 
     def update_params(self, params={}):
