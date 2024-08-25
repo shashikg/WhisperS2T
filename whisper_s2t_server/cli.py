@@ -57,7 +57,12 @@ def start_server(server_port, asr_args, vad_args, app_args):
         pid_file.write(f"app:{app_process.pid}\n")
 
 def view_logs():
-    subprocess.run(["tail", "-f", f"{WHISPER_S2T_SERVER_TMP_PATH}/logs/gunicorn.log"])
+    subprocess.run([
+        "tail", "-f", f"{WHISPER_S2T_SERVER_TMP_PATH}/logs/app.log", "&",
+        "tail", "-f", f"{WHISPER_S2T_SERVER_TMP_PATH}/logs/asr.log", "&",
+        "tail", "-f", f"{WHISPER_S2T_SERVER_TMP_PATH}/logs/vad.log", "&",
+        "tail", "-f", f"{WHISPER_S2T_SERVER_TMP_PATH}/logs/gunicorn.log"
+    ])
 
 def stop_server():
     try:
@@ -100,7 +105,7 @@ def main():
         vad_args = {
             "device": args.device,
         }
-        
+
         app_args = {
             "server_port": args.server_port,
             "app_server_port": args.app_server_port,
