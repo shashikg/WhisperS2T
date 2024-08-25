@@ -91,21 +91,22 @@ def main():
     args = parser.parse_args()
     
     if args.command == 'start':
-        start_args = start_parser.parse_args()
         asr_args = {
-            "model_identifier": start_args.model_identifier,
-            "backend": start_args.backend,
-            "device": start_args.device,
-        }
-        vad_args = {
-            "device": start_args.device,
-        }
-        app_args = {
-            "server_port": start_parser.server_port,
-            "app_server_port": start_parser.app_server_port,
+            "model_identifier": args.model_identifier,
+            "backend": args.backend,
+            "device": args.device,
         }
 
-        start_server(start_parser.server_port, asr_args, vad_args, app_args)
+        vad_args = {
+            "device": args.device,
+        }
+        
+        app_args = {
+            "server_port": args.server_port,
+            "app_server_port": args.app_server_port,
+        }
+
+        start_server(args.server_port, asr_args, vad_args, app_args)
     elif args.command == 'logs':
         view_logs()
     elif args.command == 'stop':
