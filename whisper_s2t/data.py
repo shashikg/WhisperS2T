@@ -1,5 +1,6 @@
 import torch
 
+import math
 import numpy as np
 from tqdm import tqdm
 
@@ -63,7 +64,7 @@ class BasicSegmenter:
             audio_duration = len(audio_signal)/self.sampling_rate
             
         start_ends = []
-        for i in range(0, int(audio_duration), int(self.max_seg_len)):
+        for i in range(0, math.ceil(audio_duration), int(self.max_seg_len)):
             start_ends.append([i, i + self.max_seg_len])
         
         start_ends[-1][1] = min(audio_duration, start_ends[-1][1]) # fix edge
