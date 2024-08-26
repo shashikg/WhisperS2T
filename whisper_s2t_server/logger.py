@@ -24,7 +24,13 @@ class LogFileHandler(FileSystemEventHandler):
         for path in file_paths:
             try:
                 f = open(path, 'r')
-                f.seek(0, 2)  # Move to the end of the file
+                # Read the entire file content initially
+                content = f.read()
+                if content:
+                    print(content, end='')
+
+                # Move the pointer to the end of the file for live monitoring
+                f.seek(0, 2)
                 self.file_pointers[path] = f
             except Exception as e:
                 print(f"Error opening {path}: {e}")
@@ -36,7 +42,7 @@ class LogFileHandler(FileSystemEventHandler):
             new_lines = f.readlines()
             if new_lines:
                 for line in new_lines:
-                    print(f"[{event.src_path}]: {line}", end='')
+                    print(f"{line}", end='')
 
     def close_files(self):
         for f in self.file_pointers.values():
