@@ -7,8 +7,8 @@ from ... import WHISPER_S2T_SERVER_TMP_PATH
 ASR_REQ_PATH = f"{WHISPER_S2T_SERVER_TMP_PATH}/models_queue/asr/request"
 ASR_RES_PATH = f"{WHISPER_S2T_SERVER_TMP_PATH}/models_queue/asr/response"
 
-os.system(f"rm -rf {ASR_REQ_PATH}")
-os.system(f"rm -rf {ASR_RES_PATH}")
+# os.system(f"rm -rf {ASR_REQ_PATH}")
+# os.system(f"rm -rf {ASR_RES_PATH}")
 
 os.makedirs(ASR_REQ_PATH, exist_ok=True)
 os.makedirs(ASR_RES_PATH, exist_ok=True)

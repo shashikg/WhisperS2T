@@ -7,7 +7,7 @@ from . import WHISPER_S2T_SERVER_TMP_PATH, BASE_PATH
 
 
 def start_server(server_port, asr_args, vad_args, app_args):
-    os.system(f"rm -rf {WHISPER_S2T_SERVER_TMP_PATH}/logs")
+    os.system(f"rm -rf {WHISPER_S2T_SERVER_TMP_PATH}/")
     os.makedirs(f'{WHISPER_S2T_SERVER_TMP_PATH}/logs', exist_ok=True)
     
     # Start the Gunicorn server
