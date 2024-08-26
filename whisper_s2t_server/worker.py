@@ -125,6 +125,8 @@ def start_worker():
         else:
             working_requests.append(process_job(job_id, job_details))
 
+    Logger.info(f"Worker stopped!")
+
 
 if __name__ == "__main__":
     start_worker()
