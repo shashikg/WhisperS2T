@@ -1,4 +1,5 @@
 import os
+import shutil
 import signal
 import argparse
 import subprocess
@@ -8,7 +9,7 @@ from .logger import LogFileHandler, StreamLogs
 
 
 def start_server(server_port, asr_args, vad_args, app_args):
-    os.system(f"rm -rf {WHISPER_S2T_SERVER_TMP_PATH}/")
+    shutil.rmtree(f"{WHISPER_S2T_SERVER_TMP_PATH}/")
     os.makedirs(f'{WHISPER_S2T_SERVER_TMP_PATH}/logs', exist_ok=True)
     
     # Start the Gunicorn server
@@ -83,7 +84,7 @@ def stop_server():
             for line in lines:
                 try:
                     process_name, pid = line.strip().split(':')
-                    os.kill(int(pid), signal.SIGTERM)
+                    os.kill(int(pid), signal.SIGKILL)
                     print(f"Killed {process_name} with PID: {pid}")
                 except Exception as ex:
                     print(f"Failed to kill {process_name} with PID: {pid}. Error: {ex}")
