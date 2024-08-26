@@ -11,7 +11,7 @@ def start_server(server_port, asr_args, vad_args, app_args):
     os.makedirs(f'{WHISPER_S2T_SERVER_TMP_PATH}/logs', exist_ok=True)
     
     # Start the Gunicorn server
-    gunicorn_command = [
+    rest_server_command = [
         "gunicorn",
         "--preload",
         "-t", "180",
@@ -23,8 +23,8 @@ def start_server(server_port, asr_args, vad_args, app_args):
         "whisper_s2t_server.server:app"
     ]
     
-    with open(f'{WHISPER_S2T_SERVER_TMP_PATH}/logs/gunicorn.log', 'a') as log_file:
-        gunicorn_process = subprocess.Popen(gunicorn_command, stdout=log_file, stderr=log_file)
+    with open(f'{WHISPER_S2T_SERVER_TMP_PATH}/logs/rest_server.log', 'a') as log_file:
+        rest_server_process = subprocess.Popen(rest_server_command, stdout=log_file, stderr=log_file)
     
     # Start the ASR process
     asr_input_args = [f"--{k}={v}" for k, v in asr_args.items()]
@@ -37,6 +37,11 @@ def start_server(server_port, asr_args, vad_args, app_args):
     vad_command = ["python3", "-m", "whisper_s2t_server.models.vad.main"] + vad_input_args
     with open(f'{WHISPER_S2T_SERVER_TMP_PATH}/logs/vad.log', 'a') as log_file:
         vad_process = subprocess.Popen(vad_command, stdout=log_file, stderr=log_file)
+
+    # Start Main Worker
+    main_worker_command = ["python3", "-m", "whisper_s2t_server.worker"]
+    with open(f'{WHISPER_S2T_SERVER_TMP_PATH}/logs/main_worker.log', 'a') as log_file:
+        main_worker_process = subprocess.Popen(main_worker_command, stdout=log_file, stderr=log_file)
 
     # Start the Streamlit App process
     app_input_args = [
@@ -51,18 +56,21 @@ def start_server(server_port, asr_args, vad_args, app_args):
     
     # Save PIDs to a file
     with open(f'{WHISPER_S2T_SERVER_TMP_PATH}/logs/process_pids.txt', 'w') as pid_file:
-        pid_file.write(f"gunicorn:{gunicorn_process.pid}\n")
+        pid_file.write(f"rest_server:{rest_server_process.pid}\n")
         pid_file.write(f"asr:{asr_process.pid}\n")
         pid_file.write(f"vad:{vad_process.pid}\n")
         pid_file.write(f"app:{app_process.pid}\n")
+        pid_file.write(f"main_worker:{main_worker_process.pid}\n")
 
 def view_logs():
-    subprocess.run([
+    os.system(" ".join([
         "tail", "-f", f"{WHISPER_S2T_SERVER_TMP_PATH}/logs/app.log", "&",
         "tail", "-f", f"{WHISPER_S2T_SERVER_TMP_PATH}/logs/asr.log", "&",
         "tail", "-f", f"{WHISPER_S2T_SERVER_TMP_PATH}/logs/vad.log", "&",
-        "tail", "-f", f"{WHISPER_S2T_SERVER_TMP_PATH}/logs/gunicorn.log"
-    ])
+        "tail", "-f", f"{WHISPER_S2T_SERVER_TMP_PATH}/logs/rest_server.log", "&",
+        "tail", "-f", f"{WHISPER_S2T_SERVER_TMP_PATH}/logs/main_worker.log", "&",
+        "wait"
+    ]))
 
 def stop_server():
     try:
@@ -71,9 +79,10 @@ def stop_server():
             for line in lines:
                 try:
                     process_name, pid = line.strip().split(':')
-                    print(f"Killing {process_name} with PID: {pid}")
                     os.kill(int(pid), signal.SIGTERM)
-                except:
+                    print(f"Killed {process_name} with PID: {pid}")
+                except Exception as ex:
+                    print(f"Failed to kill {process_name} with PID: {pid}. Error: {ex}")
                     pass
         
         os.remove(f'{WHISPER_S2T_SERVER_TMP_PATH}/logs/process_pids.txt')
