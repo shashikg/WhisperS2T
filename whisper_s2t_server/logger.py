@@ -25,9 +25,9 @@ class LogFileHandler(FileSystemEventHandler):
             try:
                 f = open(path, 'r')
                 # Read the entire file content initially
-                content = f.read()
-                if content:
-                    print(content, end='')
+                # content = f.read()
+                # if content:
+                #     print(content, end='')
 
                 # Move the pointer to the end of the file for live monitoring
                 f.seek(0, 2)
