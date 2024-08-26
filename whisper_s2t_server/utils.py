@@ -68,6 +68,7 @@ def pullTask():
     
 
 def finishTask(job_id, result):
+    Logger.info(f"Task finished with job id: {job_id}")
     updateJobStatus(job_id, 
                     status="completed", 
                     progress=100,
@@ -82,6 +83,7 @@ def finishTask(job_id, result):
 
 
 def failedTask(job_id, error):
+    Logger.info(f"Task failed with job id: {job_id}")
     updateJobStatus(job_id, 
                     status="failed", 
                     progress=100, 

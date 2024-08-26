@@ -4,6 +4,7 @@ import argparse
 import subprocess
 
 from . import WHISPER_S2T_SERVER_TMP_PATH, BASE_PATH
+from .logger import LogFileHandler, StreamLogs
 
 
 def start_server(server_port, asr_args, vad_args, app_args):
@@ -63,14 +64,17 @@ def start_server(server_port, asr_args, vad_args, app_args):
         pid_file.write(f"main_worker:{main_worker_process.pid}\n")
 
 def view_logs():
-    os.system(" ".join([
-        "tail", "-f", f"{WHISPER_S2T_SERVER_TMP_PATH}/logs/app.log", "&",
-        "tail", "-f", f"{WHISPER_S2T_SERVER_TMP_PATH}/logs/asr.log", "&",
-        "tail", "-f", f"{WHISPER_S2T_SERVER_TMP_PATH}/logs/vad.log", "&",
-        "tail", "-f", f"{WHISPER_S2T_SERVER_TMP_PATH}/logs/rest_server.log", "&",
-        "tail", "-f", f"{WHISPER_S2T_SERVER_TMP_PATH}/logs/main_worker.log", "&",
-        "wait"
-    ]))
+
+    log_files = [
+        f"{WHISPER_S2T_SERVER_TMP_PATH}/logs/app.log",
+        f"{WHISPER_S2T_SERVER_TMP_PATH}/logs/asr.log",
+        f"{WHISPER_S2T_SERVER_TMP_PATH}/logs/vad.log",
+        f"{WHISPER_S2T_SERVER_TMP_PATH}/logs/rest_server.log",
+        f"{WHISPER_S2T_SERVER_TMP_PATH}/logs/main_worker.log"
+    ]
+
+    StreamLogs(log_files)
+
 
 def stop_server():
     try:

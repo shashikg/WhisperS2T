@@ -120,7 +120,6 @@ def start_worker():
 
         job_id, job_details = pullTask()
         if job_id is None:
-            Logger.info(f"Waiting for new task...")
             time.sleep(WAIT_TIME_TO_SCHEDULE)
             continue
         else:
