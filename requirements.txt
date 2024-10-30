@@ -1,6 +1,6 @@
 tqdm==4.66.2
 rich==13.7.0
-torch==2.1.2+cu121
+torch>=2.1.2
 numpy==1.26.4
 platformdirs==4.2.0
 ctranslate2==4.0.0

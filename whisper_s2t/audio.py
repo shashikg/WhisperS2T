@@ -1,3 +1,4 @@
+import io
 import os
 import wave
 import tempfile
@@ -8,7 +9,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from multiprocessing.dummy import Pool
+import concurrent
+# from multiprocessing.dummy import Pool
 
 from . import BASE_PATH
 from .configs import *
@@ -38,37 +40,143 @@ with tempfile.TemporaryDirectory() as tmpdir:
             print(f"Using 'swr' resampler. This may degrade performance.")
         
 
-def load_audio(input_file, sr=16000, return_duration=False):
+# def load_audio(input_file, sr=16000, return_duration=False):
     
-    try:
-        with wave.open(input_file, 'rb') as wf:
+#     try:
+#         with wave.open(input_file, 'rb') as wf:
+#             if (wf.getframerate() != sr) or (wf.getnchannels() != 1):
+#                 raise Exception("Not a 16kHz wav mono channel file!")
+                
+#             frames = wf.getnframes()
+#             x = wf.readframes(int(frames))
+#     except:
+#         with tempfile.TemporaryDirectory() as tmpdir:
+#             wav_file = f"{tmpdir}/tmp.wav"
+#             ret_code = os.system(f'ffmpeg -hide_banner -loglevel panic -i "{input_file}" -threads 1 -acodec pcm_s16le -ac 1 -af aresample=resampler={RESAMPLING_ENGINE} -ar {sr} "{wav_file}" -y')
+#             if ret_code != 0: raise RuntimeError("ffmpeg failed to resample the input audio file, make sure ffmpeg is compiled properly!")
+        
+#             with wave.open(wav_file, 'rb') as wf:
+#                 frames = wf.getnframes()
+#                 x = wf.readframes(int(frames))
+    
+#     audio_signal = np.frombuffer(x, np.int16).flatten().astype(np.float32)/32768.0
+#     audio_duration = len(audio_signal)/sr
+    
+#     if return_duration:
+#         return audio_signal, audio_duration
+#     else:
+#         return audio_signal
+
+
+def load_audio(input_file: str | bytes | np.ndarray, sr: int = 16000, return_duration: bool = False) -> np.ndarray | tuple[np.ndarray, float]:
+    """Load audio from disk or memory
+
+    Args:
+        input_file (str | bytes | np.ndarray): path to file, audio object in memory or numpy pre-loaded ndarray
+        sr (int, optional): sample rate. Defaults to 16000.
+        return_duration (bool, optional): return audio duration. Defaults to False.
+    
+    Returns:
+        (np.ndarray | tuple[np.ndarray, float]): audio signal as numpy ndarray, audio duration
+    """
+    def _load_audio_as_ndarray(input_file: str | bytes, sr: int = 16000) -> tuple[np.ndarray, float]:
+        """Load audio from WAV file
+
+        Args:
+            input_file (str | bytes): path to file or object in memory
+            sr (int, optional): sample rate. Defaults to 16000.
+
+        Raises:
+            Exception: Not a 16kHz wav mono channel file!
+
+        Returns:
+            tuple[np.ndarray, float]: audio signal as numpy ndarray, audio duration
+        """
+        with wave.open(input_file if isinstance(input_file, str) else io.BytesIO(input_file), 'rb') as wf:
             if (wf.getframerate() != sr) or (wf.getnchannels() != 1):
                 raise Exception("Not a 16kHz wav mono channel file!")
-                
+            
             frames = wf.getnframes()
             x = wf.readframes(int(frames))
-    except:
-        with tempfile.TemporaryDirectory() as tmpdir:
-            wav_file = f"{tmpdir}/tmp.wav"
-            ret_code = os.system(f'ffmpeg -hide_banner -loglevel panic -i "{input_file}" -threads 1 -acodec pcm_s16le -ac 1 -af aresample=resampler={RESAMPLING_ENGINE} -ar {sr} "{wav_file}" -y')
-            if ret_code != 0: raise RuntimeError("ffmpeg failed to resample the input audio file, make sure ffmpeg is compiled properly!")
         
-            with wave.open(wav_file, 'rb') as wf:
-                frames = wf.getnframes()
-                x = wf.readframes(int(frames))
-    
-    audio_signal = np.frombuffer(x, np.int16).flatten().astype(np.float32)/32768.0
-    audio_duration = len(audio_signal)/sr
-    
-    if return_duration:
+        # convert to numpy and calculate audio duration
+        audio_signal = np.frombuffer(x, np.int16).flatten().astype(np.float32)/32768.0
+        audio_duration = len(audio_signal)/sr
+        
         return audio_signal, audio_duration
-    else:
-        return audio_signal
+    
+    def _ffmpeg_convert_to_wav(input_file: str, wav_file: str, sr: int = 16000):
+        """Converts audio file into WAV file format
+
+        Args:
+            input_file (str): input file
+            wav_file (str): wav file name
+            sr (int, optional): sample rate. Defaults to 16000.
+
+        Raises:
+            RuntimeError: ffmpeg failed to resample the input audio file, make sure ffmpeg is compiled properly!
+        """
+        ret_code = os.system(f'ffmpeg -hide_banner -loglevel panic -i "{input_file}" -threads 1 -acodec pcm_s16le -ac 1 -af aresample=resampler={RESAMPLING_ENGINE} -ar {sr} "{wav_file}" -y')
+        if ret_code != 0: raise RuntimeError("ffmpeg failed to resample the input audio file, make sure ffmpeg is compiled properly!")
+    
+    # load audio from disk or memory
+    audio_signal = None
+    audio_duration = None
+    if isinstance(input_file, (str, bytes)):
+        try:
+            audio_signal, audio_duration = _load_audio_as_ndarray(input_file=input_file, sr=sr)
+        except:
+            with tempfile.TemporaryDirectory() as tmpdir:
+                # save bytes to file
+                if isinstance(input_file, bytes):
+                    tmp_file = os.path.join(tmpdir, 'audio')
+                    with open(tmp_file, 'wb') as f:
+                        f.write(input_file)
+                    input_file = tmp_file
+                
+                # convert to wav
+                wav_file = os.path.join(tmpdir, 'tmp.wav')
+                _ffmpeg_convert_to_wav(input_file=input_file, wav_file=wav_file, sr=sr)
+                audio_signal, audio_duration = _load_audio_as_ndarray(input_file=wav_file, sr=sr)
+        
+    # already preprocessed into numpy ndarray
+    else: 
+        audio_signal = input_file
+        audio_duration = len(input_file) / sr
+    
+    return (audio_signal, audio_duration) if return_duration else audio_signal
 
 
-THREAD_POOL_AUDIO_LOADER = Pool(2)
-def audio_batch_generator(audio_files):
-    return THREAD_POOL_AUDIO_LOADER.imap(load_audio, audio_files)
+# THREAD_POOL_AUDIO_LOADER = Pool(2)
+# def audio_batch_generator(audio_files):
+#     return THREAD_POOL_AUDIO_LOADER.imap(load_audio, audio_files)
+
+
+def audio_batch_generator(audio_files: list, parallel: bool = True, max_workers: int = 2):
+    """
+    Generate batches of loaded audio files, with option for parallel or sequential loading.
+    
+    Args:
+        audio_files (list): list of paths to audio files
+        parallel (bool, optional, default=True): tries parallel loading if True else uses sequential loading
+        max_workers (int, optional, default=2): maximum number of parallel workers (only used if parallel=True)
+    
+    Returns:
+        Iterator of loaded audio data
+    """
+    # try parallel loading with ThreadPoolExecutor (safer than multiprocessing.dummy.Pool)
+    if parallel:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+            try: 
+                yield from executor.map(load_audio, audio_files)
+                return # if parallel loading succeeded, we are done
+            except Exception as e:
+                print(f'Parallel audio loading failed: {str(e)}. Fall back to sequential loading...')
+                parallel = False            
+    
+    # sequential loading (fallback)
+    for audio_file in audio_files:
+        yield load_audio(audio_file)
 
 
 def pad_or_trim(array, length: int = N_SAMPLES, *, axis: int = -1):
