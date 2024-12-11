@@ -175,8 +175,8 @@ class WhisperDataLoader:
         
         if self.without_timestamps:
             prompt.append(self.tokenizer.no_timestamps)
-        else:
-            prompt.append(self.tokenizer.timestamp_begin)
+        #else:
+        #    prompt.append(self.tokenizer.timestamp_begin)
 
         segmented_audio_signal = []
 
