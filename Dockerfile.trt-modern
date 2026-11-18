@@ -1,0 +1,10 @@
+FROM python:3.12-slim-trixie
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential libopenmpi40 openmpi-bin libsndfile1 ffmpeg git libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+ENV CUDA_HOME=/usr/local/lib/python3.12/site-packages/nvidia/cu13
+ENV PATH="${CUDA_HOME}/bin:${PATH}"
+WORKDIR /opt/whisper-s2t
+COPY . .
+RUN pip install --no-cache-dir -r requirements-trt.lock \
+    && pip install --no-cache-dir --no-deps .

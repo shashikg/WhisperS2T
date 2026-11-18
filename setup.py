@@ -8,14 +8,15 @@ with open("requirements.txt", "r", encoding="utf-8") as f:
 
 setup(
     name="whisper_s2t",
-    version="1.3.1",
+    version="1.4.0.dev0",
     description="An Optimized Speech-to-Text Pipeline for the Whisper Model.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    python_requires=">=3.8",
+    python_requires=">=3.10",
     author="Shashi Kant Gupta",
     url="https://github.com/shashikg/WhisperS2T",
     license="MIT",
+    license_files=["LICENSE", "LICENSE-NVIDIA"],
     packages=find_packages(exclude=["tests*"]),
     install_requires=requirements,
     package_data={

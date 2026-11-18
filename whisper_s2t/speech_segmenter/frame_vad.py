@@ -71,7 +71,7 @@ class FrameVAD(VADBaseClass):
 
         return input_signal, input_signal_length
 
-    @torch.cuda.amp.autocast()
+    @torch.amp.autocast("cuda")
     @torch.no_grad()
     def forward(self, input_signal, input_signal_length):
         

@@ -71,8 +71,11 @@ class WhisperModelTRT(WhisperModel):
                  asr_options={},
                  **model_kwargs):
 
+        if device_index != 0 or device != "cuda" or compute_type != "float16":
+            raise ValueError("TensorRT runtime supports CUDA device 0 with float16")
+
         # ASR Options
-        self.asr_options = FAST_ASR_OPTIONS
+        self.asr_options = FAST_ASR_OPTIONS.copy()
         self.asr_options.update(asr_options)
         
         # Get local model path or build a new engine

@@ -1,3 +1,5 @@
+> **Development fork:** TensorRT-LLM 1.2.1 FP16 and INT8 weight-only Small inference are validated on an RTX 4070 Ti. See [the updated build guide](MODERN_TENSORRT.md) for current installation and engine compatibility. The historical benchmarks below do not establish performance for this runtime.
+
 <h1 align="center"> WhisperS2T ⚡ </h1>
 <p align="center"><b>An Optimized Speech-to-Text Pipeline for the Whisper Model Supporting Multiple Inference Engine!</b></p>
 <p align="center">

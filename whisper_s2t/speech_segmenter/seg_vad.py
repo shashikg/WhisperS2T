@@ -73,7 +73,7 @@ class SegmentVAD(VADBaseClass):
 
         return input_signal, input_signal_length
     
-    @torch.cuda.amp.autocast()
+    @torch.amp.autocast("cuda")
     @torch.no_grad()
     def forward(self, input_signal, input_signal_length):
         x, x_len = self.vad_pp(torch.Tensor(input_signal).to(self.device), 

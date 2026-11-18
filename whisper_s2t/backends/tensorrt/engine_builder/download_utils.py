@@ -43,7 +43,7 @@ def download_model(name):
     if not os.path.exists(tokenizer_path):
         with urllib.request.urlopen(_TOKENIZER[name]) as source, open(tokenizer_path, "wb") as output:
             with tqdm(
-                total=int(source.info().get("Content-Length")),
+                total=int(source.info().get("Content-Length", 0)),
                 ncols=80,
                 unit="iB",
                 unit_scale=True,
@@ -73,7 +73,7 @@ def download_model(name):
 
     with urllib.request.urlopen(url) as source, open(model_ckpt_path, "wb") as output:
         with tqdm(
-            total=int(source.info().get("Content-Length")),
+            total=int(source.info().get("Content-Length", 0)),
             ncols=80,
             unit="iB",
             unit_scale=True,

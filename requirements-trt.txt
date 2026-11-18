@@ -1,0 +1,12 @@
+-r requirements.txt
+tensorrt-llm==1.2.1
+janus>=2,<3
+lark>=1.2,<2
+--extra-index-url https://download.pytorch.org/whl/cu130
+torch==2.9.1+cu130
+cuda-python>=13,<13.3
+nvidia-cuda-nvrtc==13.0.48
+
+pyarrow==21.0.0
+
+nvidia-cuda-nvcc==13.0.48
